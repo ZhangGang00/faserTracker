@@ -25,8 +25,15 @@ else()
 endif()
 
 #----------------------------------------------------------------------------
+# Find ACTS
+#find_package (ACTS COMPONENTS Core)
+# Not needed:
+#include($ENV{HOME}/software/acts-core-install/include)
+
+#----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions
 #
+message(STATUS "Geant4_USE_FILE=${Geant4_USE_FILE}")
 include(${Geant4_USE_FILE})
 
 #---------------------------------------------------------------------------
@@ -80,9 +87,13 @@ endif()
 #
 #TODO: Add faserMC includes once faserMC package access is enabled.
 include_directories(${PROJECT_SOURCE_DIR}/include
-#                   $ENV{FASER_BASE_DIR}/include
+                    #$ENV{FASER_BASE_DIR}/include
+                    #$ENV{HOME}/software/acts-core-install/include
+                    #$ENV{HOME}/software/eigen-eigen-5a0156e40feb
                     ${Geant4_INCLUDE_DIR}
-                    ${ROOT_INCLUDE_DIR})
+                    ${ROOT_INCLUDE_DIR}
+                    "$ENV{HOME}/software/boost_1_66_0"
+                    )
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/**.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/**.hh)
 

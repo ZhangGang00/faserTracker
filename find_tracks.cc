@@ -3,33 +3,21 @@
 #include <cstdlib>
 #include "common_includes.hh"
 #include "TChain.h"
+#include "TFile.h"
+#include "TGraph2D.h"
+#include "TGraph.h"
 #include "FaserSensorHit.hh"
 #include "G4ThreeVector.hh"
 #include "FaserTracker/HitInfo.hh"
 #include "FaserTracker/Debugger.hh"
+#include "FaserTracker/TrackInfo.hh"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
-//#include "ACTS/Detector/TrackingGeometry.hpp"
-//#include "ACTS/EventData/Measurement.hpp"
-//#include "ACTS/Extrapolation/ExtrapolationCell.hpp"
-//#include "ACTS/Extrapolation/ExtrapolationEngine.hpp"
-//#include "ACTS/Extrapolation/IExtrapolationEngine.hpp"
-//#include "ACTS/Extrapolation/MaterialEffectsEngine.hpp"
-//#include "ACTS/Extrapolation/RungeKuttaEngine.hpp"
-//#include "ACTS/Extrapolation/StaticEngine.hpp"
-//#include "ACTS/Extrapolation/StaticNavigationEngine.hpp"
-//#include "ACTS/Fitter/KalmanFitter.hpp"
-//#include "ACTS/Fitter/KalmanUpdator.hpp"
-//#include "ACTS/MagneticField/ConstantBField.hpp"
-//#include "ACTS/Surfaces/PerigeeSurface.hpp"
-//#include "ACTS/Utilities/Definitions.hpp"
-//#include "ACTS/Utilities/Logger.hpp"
 
 void usage(string executable) {
     cout << "Usage: " << executable << " [options]" << "\n"
          << "Options:\n"
-         << "  -c/--checkEvent EVENT_NUMBER   event number on which to dump full info\n"
          << "  -d/--debug DEBUG_LEVEL         debug level 0-3 (0: none, 3: max)\n"
          << "  -h/--help                      print help\n"
          << "  -i/--input FILE_NAME           path to input ROOT file\n"
@@ -40,13 +28,11 @@ void usage(string executable) {
 int main(int argc, char ** argv) {
     string input = "";
     long   nEntries = -1;
-    long   checkEvent = -1;
 
     int iOpt = 1;
     while (iOpt < argc) {
         string sw = argv[iOpt];
-        if      (sw=="-c" || sw=="--checkEvent") { checkEvent = stoi(argv[++iOpt]); }
-        else if (sw=="-h" || sw=="--help"      ) { usage(argv[0]); return 0; }
+        if      (sw=="-h" || sw=="--help"      ) { usage(argv[0]); return 0; }
         else if (sw=="-i" || sw=="--input"     ) { input = argv[++iOpt]; }
         else if (sw=="-n" || sw=="--nEntries"  ) { nEntries = stoi(argv[++iOpt]); }
         else {
@@ -58,7 +44,6 @@ int main(int argc, char ** argv) {
     }
     cout << "Flags:\n"
          << "------\n"
-         << "  checkEvent = " << checkEvent << "\n"
          << "  nEntries   = " << nEntries   << "\n"
          << "  input      = " << input      << "\n"
          << "\n";
@@ -70,23 +55,29 @@ int main(int argc, char ** argv) {
              << "       containing the `faser_tracker` package.\n";
         return 1;
     }
-    string propertyFile = string(faserDir) + "/faser_tracker/settings.json";
+    string propertyFile = string(faserDir) + "/faser_tracker_run/settings.json";
     boost::property_tree::ptree properties;
     read_json(propertyFile, properties);
     cout << "INFO  Loaded settings file: " << propertyFile << "\n";
     FaserTracker::Debugger debug;
-    debug.chain = properties.get("debug.chain", 0);
-    debug.hits  = properties.get("debug.hits", 0);
+    debug.chain  = properties.get("debug.chain", 0);
+    debug.hits   = properties.get("debug.hits", 0);
+    debug.tracks = properties.get("debug.tracks", 0);
+    int nEventMin = properties.get("events.nEventMin", -1);
+    int nEventMax = properties.get("events.nEventMax", -1);
+    FaserTracker::TrackInfo trackInfo;
+    trackInfo.plotTracks = properties.get("tracks.plotTracks", 0);
+    trackInfo.trackId    = properties.get("tracks.trackId", -1);
     cout << "INFO  Using the following properties:\n"
-         << "        debug.chain = " << debug.chain << "\n"
-         << "        debug.hits  = " << debug.hits  << "\n"
+         << "        debug.chain          = " << debug.chain  << "\n"
+         << "        debug.hits           = " << debug.hits   << "\n"
+         << "        debug.tracks         = " << debug.tracks << "\n"
+         << "        events.nEventMin     = " << nEventMin << "\n"
+         << "        events.nEventMax     = " << nEventMax << "\n"
+         << "        trackInfo.plotTracks = " << trackInfo.plotTracks << "\n"
+         << "        trackInfo.trackId    = " << trackInfo.trackId << "\n"
          << "\n";
 
-    //TODO:
-    // 1. Set up ACTS surfaces
-    // 2. Feed global hit positions to ACTS surface machinery
-    // 3. Find tracks
-    // 4. Fit tracks
     vector<FaserSensorHit*> hits;
     vector<FaserSensorHit*> * pHits = &hits;
 
@@ -95,91 +86,58 @@ int main(int argc, char ** argv) {
     inputChain->SetBranchAddress("Hits", &pHits);
     cout << "INFO  Loaded input " << input << " with " << inputChain->GetEntries() << " entries.\n";;
 
+    int eventCounter = 0;
+    int trackIdCounter [50] = {0};
+    TFile outputFile {"track_info.root", "recreate"};
+    TGraph2D trackPoints;
+    TGraph   trackPointsZX;
+    TGraph   trackPointsZY;
     for (long i = 0; i < inputChain->GetEntries(); ++i) {
+        if (nEventMin > -1 && i < nEventMin) continue;
+        if (nEventMax > -1 && i > nEventMax) continue;
         if (debug.chain > 1 || (i>0 && i%1000==0)) {
             cout << "INFO  Checking chain entry " << i << "   nHits = " << hits.size() << "\n";
         }
         inputChain->GetEntry(i);
 
+        if (hits.size() < 1) continue;
+        ++eventCounter;
+        if (nEntries > -1 && eventCounter > nEntries) break;
         for (const FaserSensorHit * hit : hits) {
-            if (debug.hits > 1 || (debug.hits > 0 && checkEvent==i)) {
+            if (debug.hits > 1 || debug.hits > 0) {
                 FaserTracker::dumpHitInfo(*hit);
+            }
+            int trackId = hit->GetTrackID();
+            if (trackId >= 0 && trackId < 50) ++trackIdCounter[trackId];
+
+            if (trackInfo.plotTracks > 0 && trackInfo.trackId == trackId) {
+                G4ThreeVector glPos = hit->GetGlobalPos();
+                trackPoints.SetPoint(trackPoints.GetN(), glPos.x(), glPos.y(), glPos.z());
+                trackPointsZX.SetPoint(trackPointsZX.GetN(), glPos.z(), glPos.x());
+                trackPointsZY.SetPoint(trackPointsZY.GetN(), glPos.z(), glPos.y());
             }
 
             //G4ThreeVector globalPosition = hit->GetGlobalPos();
             //G4ThreeVector localPosition = hit->GetLocalPos();
         }
     }
-
-    //shared_ptr<const Acts::TrackingGeometry> geo = Acts::buildGenericDetector(Acts::Logging::VERBOSE,
-    //        Acts::Logging::VERBOSE,
-    //        Acts::Logging::VERBOSE,
-    //        0);
-    //ActsVector<ParValue_t, NGlobalPars> pars;
-    //pars << 0, 0, M_PI / 2, M_PI / 2, 0.0001;
-    //auto startCov = std::make_unique<ActsSymMatrix<ParValue_t, NGlobalPars>>(
-    //        ActsSymMatrix<ParValue_t, NGlobalPars>::Identity());
-
-    //const Surface* pSurf   = geo->getBeamline();
-    //auto           startTP = std::make_unique<BoundParameters>(
-    //        std::move(startCov), std::move(pars), *pSurf);
-
-    //ExtrapolationCell<TrackParameters> exCell(*startTP);
-    //exCell.addConfigurationMode(ExtrapolationMode::CollectSensitive);
-    //exCell.addConfigurationMode(ExtrapolationMode::StopAtBoundary);
-
-    //auto exEngine = initExtrapolator(geo);
-    //exEngine->extrapolate(exCell);
-
-    //std::cout << "got " << exCell.extrapolationSteps.size()
-    //    << " extrapolation steps" << std::endl;
-
-    //std::vector<FitMeas_t> vMeasurements;
-    //vMeasurements.reserve(exCell.extrapolationSteps.size());
-
-    //// identifier
-    //long int id = 0;
-    //// random numbers for smearing measurements
-    //std::default_random_engine             e;
-    //std::uniform_real_distribution<double> std_loc1(1, 5);
-    //std::uniform_real_distribution<double> std_loc2(0.1, 2);
-    //std::normal_distribution<double>       g(0, 1);
-
-    //double std1, std2, l1, l2;
-    //for (const auto& step : exCell.extrapolationSteps) {
-    //    const auto& tp = step.parameters;
-    //    if (tp->associatedSurface().type() != Surface::Cylinder) continue;
-
-    //    std1 = std_loc1(e);
-    //    std2 = std_loc2(e);
-    //    l1   = tp->get<eLOC_1>() + std1 * g(e);
-    //    l2   = tp->get<eLOC_2>() + std2 * g(e);
-    //    ActsSymMatrixD<2> cov;
-    //    cov << std1 * std1, 0, 0, std2 * std2;
-    //    vMeasurements.push_back(Meas_t<eLOC_1, eLOC_2>(
-    //                tp->associatedSurface(), id, std::move(cov), l1, l2));
-    //    ++id;
-    //}
-
-    //std::cout << "created " << vMeasurements.size() << " pseudo-measurements"
-    //    << std::endl;
-    //for (const auto& m : vMeasurements) std::cout << m << std::endl << std::endl;
-
-    //KalmanFitter<MyExtrapolator, CacheGenerator, NoCalibration, GainMatrixUpdator>
-    //    KF;
-    //KF.m_oCacheGenerator = CacheGenerator();
-    //KF.m_oCalibrator     = NoCalibration();
-    //KF.m_oExtrapolator   = MyExtrapolator(exEngine);
-    //KF.m_oUpdator        = GainMatrixUpdator();
-
-    //std::cout << "start fit" << std::endl;
-    //auto track = KF.fit(vMeasurements, std::make_unique<BoundParameters>(*startTP));
-
-    //// dump track
-    //for (const auto & p : track) {
-    //    std::cout << *p->getCalibratedMeasurement() << std::endl;
-    //    std::cout << *p->getSmoothedState() << std::endl;
-    //}
+    if (debug.tracks > 0) {
+        for (int i = 0; i < 50; ++i) {
+            cout << "Track ID " << i << "\t" << trackIdCounter[i] << "\n";
+        }
+    }
+    outputFile.cd();
+    if (trackInfo.plotTracks > 0) {
+        cout << "INFO  Saving TGraph2D `trackPoints` with " << trackPoints.GetN()
+             << " entries to output file track_info.root\n";
+        trackPoints.Write("trackPoints");
+        cout << "INFO  Saving TGraph `trackPointsZX` with " << trackPointsZX.GetN()
+             << " entries to output file track_info.root\n";
+        trackPointsZX.Write("trackPointsZX");
+        cout << "INFO  Saving TGraph `trackPointsZY` with " << trackPointsZY.GetN()
+             << " entries to output file track_info.root\n";
+        trackPointsZY.Write("trackPointsZY");
+    }
 
     // Values available in a `FaserSensorHit`:
     //G4int GetTrackID() const           { return fTrackID; };

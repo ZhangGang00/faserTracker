@@ -1,6 +1,12 @@
 {
     "debug" : {
-        "chain" : 1,
-        "hits"  : 1
+        "chain"  : 0,
+        "hits"   : 0,
+        "tracks" : 0
+    },
+
+    "tracks" : {
+        "plotTracks" : 1,
+        "trackId"    : 2
     }
 }
