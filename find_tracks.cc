@@ -11,6 +11,7 @@
 #include "FaserTracker/HitInfo.hh"
 #include "FaserTracker/Debugger.hh"
 #include "FaserTracker/TrackInfo.hh"
+#include "FaserTracker/TrackFit.hh"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
@@ -133,11 +134,14 @@ int main(int argc, char ** argv) {
         trackPoints.Write("trackPoints");
         cout << "INFO  Saving TGraph `trackPointsZX` with " << trackPointsZX.GetN()
              << " entries to output file track_info.root\n";
+        trackPointsZX.SetMarkerStyle(3);
         trackPointsZX.Write("trackPointsZX");
         cout << "INFO  Saving TGraph `trackPointsZY` with " << trackPointsZY.GetN()
              << " entries to output file track_info.root\n";
+        trackPointsZY.SetMarkerStyle(3);
         trackPointsZY.Write("trackPointsZY");
     }
+    FaserTracker::TrackFit::fitCircle(trackPointsZX);
 
     // Values available in a `FaserSensorHit`:
     //G4int GetTrackID() const           { return fTrackID; };
