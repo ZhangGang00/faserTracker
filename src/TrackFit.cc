@@ -74,11 +74,18 @@ namespace TrackFit {
         double R  = result.Parameter(2);
         double zMin = TMath::MinElement(graph.GetN(), graph.GetX());
         double zMax = TMath::MaxElement(graph.GetN(), graph.GetX());
-        TF1 f_circle {"f_circle", "[1] - sqrt([2]*[2] - (x-[0])*(x-[0]))", zMin, zMax};
-        f_circle.SetParameter(0, z0);
-        f_circle.SetParameter(1, x0);
-        f_circle.SetParameter(2, R);
-        f_circle.Draw("same");
+
+        TF1 f_upperSemiCircle {"f_upperSemiCircle", "[1] + sqrt([2]*[2] - (x-[0])*(x-[0]))", zMin, zMax};
+        f_upperSemiCircle.SetParameter(0, z0);
+        f_upperSemiCircle.SetParameter(1, x0);
+        f_upperSemiCircle.SetParameter(2, R);
+        f_upperSemiCircle.Draw("same");
+
+        TF1 f_lowerSemiCircle {"f_lowerSemiCircle", "[1] - sqrt([2]*[2] - (x-[0])*(x-[0]))", zMin, zMax};
+        f_lowerSemiCircle.SetParameter(0, z0);
+        f_lowerSemiCircle.SetParameter(1, x0);
+        f_lowerSemiCircle.SetParameter(2, R);
+        f_lowerSemiCircle.Draw("same");
 
         // Add labels
         graph.SetTitle("Circle-fitted track");
