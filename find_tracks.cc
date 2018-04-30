@@ -6,7 +6,8 @@
 #include "TFile.h"
 #include "TGraph2D.h"
 #include "TGraph.h"
-#include "FaserSensorHit.hh"
+//#include "FaserSensorHit.hh"
+#include "FaserTracker/DigiReader.hh"
 #include "G4ThreeVector.hh"
 #include "FaserTracker/HitInfo.hh"
 #include "FaserTracker/Debugger.hh"
@@ -79,13 +80,12 @@ int main(int argc, char ** argv) {
          << "        trackInfo.trackId    = " << trackInfo.trackId << "\n"
          << "\n";
 
-    vector<FaserSensorHit*> hits;
-    vector<FaserSensorHit*> * pHits = &hits;
-
-    auto inputChain = make_shared<TChain>("faser");
+    auto inputChain = make_shared<TChain>("hits");
     inputChain->Add(input.c_str());
-    inputChain->SetBranchAddress("Hits", &pHits);
     cout << "INFO  Loaded input " << input << " with " << inputChain->GetEntries() << " entries.\n";;
+
+    FaserTracker::DigiReader digiReader {*inputChain};
+    cout << "INFO  DigiReader initialized with input chain.\n";
 
     int eventCounter = 0;
     int trackIdCounter [50] = {0};
@@ -96,26 +96,30 @@ int main(int argc, char ** argv) {
     for (long i = 0; i < inputChain->GetEntries(); ++i) {
         if (nEventMin > -1 && i < nEventMin) continue;
         if (nEventMax > -1 && i > nEventMax) continue;
-        if (debug.chain > 1 || (i>0 && i%1000==0)) {
-            cout << "INFO  Checking chain entry " << i << "   nHits = " << hits.size() << "\n";
-        }
-        inputChain->GetEntry(i);
 
-        if (hits.size() < 1) continue;
+        inputChain->GetEntry(i);
+        if (debug.chain > 1 || (i>0 && i%1000==0)) {
+            cout << "INFO  Checking chain entry " << i
+                 << "   nDigits = " << digiReader.digiPlane.size()
+                 << "   nTruth  = " << digiReader.truthPlane.size() << "\n";
+        }
+
         ++eventCounter;
         if (nEntries > -1 && eventCounter > nEntries) break;
-        for (const FaserSensorHit * hit : hits) {
-            if (debug.hits > 1 || debug.hits > 0) {
-                FaserTracker::dumpHitInfo(*hit);
-            }
-            int trackId = hit->GetTrackID();
+        for (int j = 0; j < digiReader.truthGlobalX.size(); ++j) {
+            //if (debug.hits > 1 || debug.hits > 0) {
+            //    FaserTracker::dumpHitInfo(*hit);
+            //}
+            int trackId = digiReader.truthTrack[j];
             if (trackId >= 0 && trackId < 50) ++trackIdCounter[trackId];
 
             if (trackInfo.plotTracks > 0 && trackInfo.trackId == trackId) {
-                G4ThreeVector glPos = hit->GetGlobalPos();
-                trackPoints.SetPoint(trackPoints.GetN(), glPos.x(), glPos.y(), glPos.z());
-                trackPointsZX.SetPoint(trackPointsZX.GetN(), glPos.z(), glPos.x());
-                trackPointsZY.SetPoint(trackPointsZY.GetN(), glPos.z(), glPos.y());
+                double x = digiReader.truthGlobalX[j];
+                double y = digiReader.truthGlobalY[j];
+                double z = digiReader.truthGlobalZ[j];
+                trackPoints.SetPoint(trackPoints.GetN(), x, y, z);
+                trackPointsZX.SetPoint(trackPointsZX.GetN(), z, x);
+                trackPointsZY.SetPoint(trackPointsZY.GetN(), z, y);
             }
 
             //G4ThreeVector globalPosition = hit->GetGlobalPos();
