@@ -1,12 +1,24 @@
 {
     "debug" : {
-        "chain"  : 0,
-        "hits"   : 0,
-        "tracks" : 0
+        "chain"  : false,
+        "hits"   : false,
+        "digits" : false,
+        "tracks" : false
+    },
+
+    "events" : {
+        "eventNumberStart" : 5,
+        "eventNumberEnd"   : 5
     },
 
     "tracks" : {
-        "plotTracks" : 1,
-        "trackId"    : 2
+        "trackIdStart" : 0,
+        "trackIdEnd"   : 50,
+        "countTracks"  : true,
+        "fitTracks"    : true,
+        "plotHits"     : false,
+        "plotDigits"   : false,
+        "plotTruth"    : true,
+        "compareTruth" : false
     }
 }

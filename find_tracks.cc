@@ -1,7 +1,7 @@
 // adapted from Geant4 example
 
 #include <cstdlib>
-#include "common_includes.hh"
+#include "FaserTracker/common_includes.hh"
 #include "TChain.h"
 #include "TFile.h"
 #include "TGraph2D.h"
@@ -10,17 +10,13 @@
 #include "FaserTracker/DigiReader.hh"
 #include "G4ThreeVector.hh"
 #include "FaserTracker/HitInfo.hh"
-#include "FaserTracker/Debugger.hh"
-#include "FaserTracker/TrackInfo.hh"
-#include "FaserTracker/TrackFit.hh"
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+//#include "FaserTracker/TestTrackFit.hh"
+#include "FaserTracker/Plots.hh"
 
 
 void usage(string executable) {
     cout << "Usage: " << executable << " [options]" << "\n"
          << "Options:\n"
-         << "  -d/--debug DEBUG_LEVEL         debug level 0-3 (0: none, 3: max)\n"
          << "  -h/--help                      print help\n"
          << "  -i/--input FILE_NAME           path to input ROOT file\n"
          << "  -n/--nEntries N_ENTRIES        number of entries from input to process\n"
@@ -57,28 +53,10 @@ int main(int argc, char ** argv) {
              << "       containing the `faser_tracker` package.\n";
         return 1;
     }
-    string propertyFile = string(faserDir) + "/faser_tracker_run/settings.json";
-    boost::property_tree::ptree properties;
-    read_json(propertyFile, properties);
-    cout << "INFO  Loaded settings file: " << propertyFile << "\n";
-    FaserTracker::Debugger debug;
-    debug.chain  = properties.get("debug.chain", 0);
-    debug.hits   = properties.get("debug.hits", 0);
-    debug.tracks = properties.get("debug.tracks", 0);
-    int nEventMin = properties.get("events.nEventMin", -1);
-    int nEventMax = properties.get("events.nEventMax", -1);
-    FaserTracker::TrackInfo trackInfo;
-    trackInfo.plotTracks = properties.get("tracks.plotTracks", 0);
-    trackInfo.trackId    = properties.get("tracks.trackId", -1);
-    cout << "INFO  Using the following properties:\n"
-         << "        debug.chain          = " << debug.chain  << "\n"
-         << "        debug.hits           = " << debug.hits   << "\n"
-         << "        debug.tracks         = " << debug.tracks << "\n"
-         << "        events.nEventMin     = " << nEventMin << "\n"
-         << "        events.nEventMax     = " << nEventMax << "\n"
-         << "        trackInfo.plotTracks = " << trackInfo.plotTracks << "\n"
-         << "        trackInfo.trackId    = " << trackInfo.trackId << "\n"
-         << "\n";
+
+    // Load settings
+    string settingsFile = string(faserDir) + "/faser_tracker_run/settings.json";
+    auto settings = make_shared<FaserTracker::Settings>(settingsFile);
 
     auto inputChain = make_shared<TChain>("hits");
     inputChain->Add(input.c_str());
@@ -88,64 +66,56 @@ int main(int argc, char ** argv) {
     cout << "INFO  DigiReader initialized with input chain.\n";
 
     int eventCounter = 0;
-    int trackIdCounter [50] = {0};
-    TFile outputFile {"track_info.root", "recreate"};
-    TGraph2D trackPoints;
-    TGraph   trackPointsZX;
-    TGraph   trackPointsZY;
-    for (long i = 0; i < inputChain->GetEntries(); ++i) {
-        if (nEventMin > -1 && i < nEventMin) continue;
-        if (nEventMax > -1 && i > nEventMax) continue;
+    map<int, int> trackIdCounter;
 
-        inputChain->GetEntry(i);
-        if (debug.chain > 1 || (i>0 && i%1000==0)) {
-            cout << "INFO  Checking chain entry " << i
+    shared_ptr<TFile> outputFile;
+    shared_ptr<FaserTracker::Plots> plots;
+    if (settings->tracks.plotTruth) {
+        outputFile = make_shared<TFile>("truth_track_info.root", "recreate");
+        plots = make_shared<FaserTracker::Plots>(settings);
+    }
+
+
+    for (long iEvent = 0; iEvent < inputChain->GetEntries(); ++iEvent) {
+        if (settings->events.eventNumberStart > -1 && iEvent < settings->events.eventNumberStart) continue;
+        if (settings->events.eventNumberEnd   > -1 && iEvent > settings->events.eventNumberEnd) break;
+
+        inputChain->GetEntry(iEvent);
+        if (settings->debug.chain || (iEvent>0 && iEvent%1000==0)) {
+            cout << "INFO  Checking chain entry " << iEvent
                  << "   nDigits = " << digiReader.digiPlane.size()
                  << "   nTruth  = " << digiReader.truthPlane.size() << "\n";
         }
 
         ++eventCounter;
         if (nEntries > -1 && eventCounter > nEntries) break;
-        for (int j = 0; j < digiReader.truthGlobalX.size(); ++j) {
-            //if (debug.hits > 1 || debug.hits > 0) {
-            //    FaserTracker::dumpHitInfo(*hit);
-            //}
-            int trackId = digiReader.truthTrack[j];
-            if (trackId >= 0 && trackId < 50) ++trackIdCounter[trackId];
 
-            if (trackInfo.plotTracks > 0 && trackInfo.trackId == trackId) {
-                double x = digiReader.truthGlobalX[j];
-                double y = digiReader.truthGlobalY[j];
-                double z = digiReader.truthGlobalZ[j];
-                trackPoints.SetPoint(trackPoints.GetN(), x, y, z);
-                trackPointsZX.SetPoint(trackPointsZX.GetN(), z, x);
-                trackPointsZY.SetPoint(trackPointsZY.GetN(), z, y);
+        if (settings->tracks.countTracks) {
+            for (int trackId : digiReader.truthTrack) {
+                if (settings->tracks.trackIdStart > -1 && trackId < settings->tracks.trackIdStart) continue;
+                if (settings->tracks.trackIdEnd   > -1 && trackId > settings->tracks.trackIdEnd) continue;
+
+                if (trackIdCounter.count(trackId) < 1) trackIdCounter[trackId] = 0;
+                ++trackIdCounter[trackId];
             }
+        }
 
-            //G4ThreeVector globalPosition = hit->GetGlobalPos();
-            //G4ThreeVector localPosition = hit->GetLocalPos();
+        if (settings->tracks.plotTruth) {
+            plots->plotTruthDigits(digiReader, *outputFile, iEvent);
         }
     }
-    if (debug.tracks > 0) {
-        for (int i = 0; i < 50; ++i) {
-            cout << "Track ID " << i << "\t" << trackIdCounter[i] << "\n";
+
+    if (settings->tracks.countTracks) {
+        cout << "INFO  Dumping digit counts for track IDs in range specified by\n"
+             << "      settings.tracks.trackIdStart, settings.tracks.trackIdEnd:\n"
+             << "\n";
+
+        // `trackIdCounter` internally sorted by key as it was populated so no need to sort
+        for (const auto & t : trackIdCounter) {
+            cout << "        Track ID " << t.first << "\t" << t.second << "\n";
         }
     }
-    outputFile.cd();
-    if (trackInfo.plotTracks > 0) {
-        cout << "INFO  Saving TGraph2D `trackPoints` with " << trackPoints.GetN()
-             << " entries to output file track_info.root\n";
-        trackPoints.Write("trackPoints");
-        cout << "INFO  Saving TGraph `trackPointsZX` with " << trackPointsZX.GetN()
-             << " entries to output file track_info.root\n";
-        trackPointsZX.SetMarkerStyle(3);
-        trackPointsZX.Write("trackPointsZX");
-        cout << "INFO  Saving TGraph `trackPointsZY` with " << trackPointsZY.GetN()
-             << " entries to output file track_info.root\n";
-        trackPointsZY.SetMarkerStyle(3);
-        trackPointsZY.Write("trackPointsZY");
-    }
-    FaserTracker::TrackFit::fitCircle(trackPointsZX);
+
 
     // Values available in a `FaserSensorHit`:
     //G4int GetTrackID() const           { return fTrackID; };

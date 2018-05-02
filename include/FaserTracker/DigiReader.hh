@@ -1,11 +1,17 @@
 #pragma once
 
+#include <memory>
+#include <utility>
 #include <vector>
+#include "TVector3.h"
 
 class TChain;
 
+
 namespace FaserTracker {
+
     struct DigiReader {
+
         std::vector<int>     digiPlane;
         std::vector<int>     digiModule;
         std::vector<int>     digiSensor;
@@ -61,6 +67,15 @@ namespace FaserTracker {
         std::vector<double> * p_truthVertexKE = &truthVertexKE;
 
         DigiReader(TChain & inputTree);
+
+        std::shared_ptr<std::vector<std::pair<TVector3, int>>> truthGlobalPositions() const;
+
+
+    private:
+
+        mutable std::shared_ptr<std::vector<std::pair<TVector3, int>>> _cachedTruthGlobalPositions = nullptr;
+
     };
+
 }
 

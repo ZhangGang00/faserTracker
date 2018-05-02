@@ -1,4 +1,4 @@
-#include "common_includes.hh"
+#include "FaserTracker/common_includes.hh"
 #include "TStyle.h"
 #include "TLatex.h"
 #include "TCanvas.h"
@@ -13,7 +13,7 @@
 
 
 namespace FaserTracker {
-namespace TrackFit {
+namespace TestTrackFit {
     void drawLabel(string name){
         TLatex * text = new TLatex(0.15, 0.90, name.c_str());
         text->SetTextSize(0.04);
@@ -27,7 +27,7 @@ namespace TrackFit {
      * Based on this example:
      * https://root.cern.ch/root/html/tutorials/math/exampleFunctor.C.html
      */
-    void fitCircle(TGraph & graph) {
+    void fitCircle(TGraph & graph, string saveName) {
         //gStyle->SetOptFit(1111);
         TCanvas * canvas = new TCanvas("fittedTrack", "fittedTrack", 1000, 600);
         canvas->SetGrid();
@@ -92,7 +92,10 @@ namespace TrackFit {
         graph.GetXaxis()->SetTitle("z [mm]");
         graph.GetYaxis()->SetTitle("x [mm]");
 
-        canvas->SaveAs("fitted_track.png");
+        if (saveName.find('.') == string::npos) {
+            saveName += ".png";
+        }
+        canvas->SaveAs(saveName.c_str());
     }
 
 }

@@ -8,6 +8,7 @@
 #include <map>
 #include <set>
 #include <tuple>
+#include <algorithm>
 #include <utility>
 #include <memory>
 #include <iomanip>
@@ -48,6 +49,10 @@ using std::pair;
 using std::set;
 using std::tuple;
 using std::vector;
+
+// algorithms
+using std::min;
+using std::max;
 
 // exceptions
 using std::runtime_error;
