@@ -16,6 +16,9 @@ namespace FaserTracker {
         debug.hits   = properties.get("debug.hits", false);
         debug.tracks = properties.get("debug.tracks", false);
 
+        // input chain
+        inputChain.name = properties.get("inputChain.name", "hits");
+
         // events
         events.eventNumberStart = properties.get("events.eventNumberStart", -1);
         events.eventNumberEnd   = properties.get("events.eventNumberEnd", -1);
@@ -30,21 +33,41 @@ namespace FaserTracker {
         tracks.plotTruth    = properties.get("tracks.plotTruth", false);
         tracks.compareTruth = properties.get("tracks.compareTruth", false);
 
+        // clustering
+        digitClusters.distanceTolerance = properties.get("digitClusters.distanceTolerance", 0.01);
+        digitClusters.dumpClusters      = properties.get("digitClusters.dumpClusters", false);
+
+        // track finding
+
+        // track fitting
+
 
         cout << "INFO  Using the following settings:\n"
-             << "        debug.chain             = " << debug.chain  << "\n"
-             << "        debug.hits              = " << debug.hits   << "\n"
-             << "        debug.tracks            = " << debug.tracks << "\n"
+             << "\n"
+             << "        debug.chain  = " << debug.chain  << "\n"
+             << "        debug.hits   = " << debug.hits   << "\n"
+             << "        debug.tracks = " << debug.tracks << "\n"
+             << "\n"
+             << "        inputChain.name = " << inputChain.name << "\n"
+             << "\n"
              << "        events.eventNumberStart = " << events.eventNumberStart << "\n"
              << "        events.eventNumberEnd   = " << events.eventNumberEnd << "\n"
-             << "        tracks.trackIdStart     = " << tracks.trackIdStart << "\n"
-             << "        tracks.trackIdEnd       = " << tracks.trackIdEnd << "\n"
-             << "        tracks.countTracks      = " << tracks.countTracks << "\n"
-             << "        tracks.fitTracks        = " << tracks.fitTracks << "\n"
-             << "        tracks.plotHits         = " << tracks.plotHits << "\n"
-             << "        tracks.plotDigits       = " << tracks.plotDigits << "\n"
-             << "        tracks.plotTruth        = " << tracks.plotTruth << "\n"
-             << "        tracks.compareTruth     = " << tracks.compareTruth << "\n"
+             << "\n"
+             << "        tracks.trackIdStart = " << tracks.trackIdStart << "\n"
+             << "        tracks.trackIdEnd   = " << tracks.trackIdEnd << "\n"
+             << "        tracks.countTracks  = " << tracks.countTracks << "\n"
+             << "        tracks.fitTracks    = " << tracks.fitTracks << "\n"
+             << "        tracks.plotHits     = " << tracks.plotHits << "\n"
+             << "        tracks.plotDigits   = " << tracks.plotDigits << "\n"
+             << "        tracks.plotTruth    = " << tracks.plotTruth << "\n"
+             << "        tracks.compareTruth = " << tracks.compareTruth << "\n"
+             << "\n"
+             << "        digitClusters.distanceTolerance = " << digitClusters.distanceTolerance << "\n"
+             << "        digitClusters.dumpClusters      = " << digitClusters.dumpClusters << "\n"
+             //<< "\n"
+             //<< "        trackFinding.blah = " << trackFinding.blah << "\n"
+             //<< "\n"
+             //<< "        trackFitting.blah = " << trackFitting.blah << "\n"
              << "\n";
     }
 

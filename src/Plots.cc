@@ -20,11 +20,12 @@ namespace FaserTracker {
         map<int, TGraph>   trackPointsZX;
         map<int, TGraph>   trackPointsZY;
 
-        shared_ptr<vector<pair<TVector3, int>>> globalPositions = digiReader.truthGlobalPositions();
+        shared_ptr<vector<Digit>> digits = digiReader.digits();
 
-        for (const auto & pos : *globalPositions) {
+        for (const auto & digit : *digits) {
 
-            int trackId = pos.second;
+            const TVector3 & pos = digit.truthGlobalPos;
+            int trackId = digit.truthTrackId;
 
             if ((settings->tracks.trackIdStart > -1 && trackId <= settings->tracks.trackIdStart) ||
                 (settings->tracks.trackIdEnd   > -1 && trackId >= settings->tracks.trackIdEnd))
@@ -42,10 +43,9 @@ namespace FaserTracker {
             TGraph & tZX = trackPointsZX[trackId];
             TGraph & tZY = trackPointsZY[trackId];
 
-            TVector3 posVec = pos.first;
-            t.SetPoint(t.GetN(), posVec.X(), posVec.Y(), posVec.Z());
-            tZX.SetPoint(tZX.GetN(), posVec.Z(), posVec.X());
-            tZY.SetPoint(tZY.GetN(), posVec.Z(), posVec.Y());
+            t.SetPoint(t.GetN(), pos.X(), pos.Y(), pos.Z());
+            tZX.SetPoint(tZX.GetN(), pos.Z(), pos.X());
+            tZY.SetPoint(tZY.GetN(), pos.Z(), pos.Y());
 
         }
 
@@ -81,46 +81,6 @@ namespace FaserTracker {
 
     }
 
-//    void plotTrackDigits(const std::vector<Digit> & digits, int trackId, char xAxisVar, char yAxisVar) {
-//        if (xAxisVar!='x' && xAxisVar!='y' && xAxisVar!='z') {
-//            cout << "ERROR  FaserTracker::Plots::plotTrackDigits\n"
-//                 << "       Illegal x-axis quantity specified: " << xAxisVar << "\n";
-//        }
-//        if (yAxisVar!='x' && yAxisVar!='y' && yAxisVar!='z') {
-//            cout << "ERROR  FaserTracker::Plots::plotTrackDigits\n"
-//                 << "       Illegal y-axis quantity specified: " << yAxisVar << "\n";
-//        }
-//
-//        auto g_digitPos = make_shared<TGraph>();
-//        for (const Digit & digit : digits) {
-//
-//            double xVal;
-//            double yVal;
-//
-//            switch (xAxisVar) {
-//            case 'x':
-//                xVal = digit.globalPosition.X();
-//            case 'y':
-//                xVal = digit.globalPosition.Y();
-//            case 'z':
-//                xVal = digit.globalPosition.Z();
-//            }
-//
-//            switch (yAxisVar) {
-//            case 'x':
-//                yVal = digit.globalPosition.X();
-//            case 'y':
-//                yVal = digit.globalPosition.Y();
-//            case 'z':
-//                yVal = digit.globalPosition.Z();
-//            }
-//
-//            g_digitPos->SetPoint(g_digitPos->GetN(), xAxisVal, yAxisVal);
-//        }
-//
-//        return g_digitPos;
-//    }
-//
 //    void compareDigiVsTruth(TGraph & gDigi, TGraph & gTruth) {
 //        double xMin = min(gDigi.GetXaxis()->GetMinimum(), gTruth.GetXaxis()->GetMinimum());
 //        double xMax = max(gDigi.GetXaxis()->GetMaximum(), gTruth.GetXaxis()->GetMaximum());

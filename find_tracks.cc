@@ -12,6 +12,8 @@
 #include "FaserTracker/HitInfo.hh"
 //#include "FaserTracker/TestTrackFit.hh"
 #include "FaserTracker/Plots.hh"
+#include "FaserTracker/DigiClusterFinder.hh"
+#include "FaserTracker/DigiCluster.hh"
 
 
 void usage(string executable) {
@@ -58,7 +60,7 @@ int main(int argc, char ** argv) {
     string settingsFile = string(faserDir) + "/faser_tracker_run/settings.json";
     auto settings = make_shared<FaserTracker::Settings>(settingsFile);
 
-    auto inputChain = make_shared<TChain>("hits");
+    auto inputChain = make_shared<TChain>(settings->inputChain.name.c_str());
     inputChain->Add(input.c_str());
     cout << "INFO  Loaded input " << input << " with " << inputChain->GetEntries() << " entries.\n";;
 
@@ -103,8 +105,29 @@ int main(int argc, char ** argv) {
         if (settings->tracks.plotTruth) {
             plots->plotTruthDigits(digiReader, *outputFile, iEvent);
         }
+
+        if (settings->digitClusters.dumpClusters) {
+            cout << "INFO  Dumping digit clusters\n"
+                 << "\n";
+
+            FaserTracker::DigiClusterFinder dcf {settings->digitClusters.distanceTolerance};
+            shared_ptr<vector<FaserTracker::DigiCluster>> digiClusters = dcf.findDigitClusters(digiReader);
+            for (const FaserTracker::DigiCluster & cluster : *digiClusters) {
+                shared_ptr<TVector3> pos = cluster.globalPosition();
+                cout << "        DigiCluster  plane=" << cluster.plane
+                     <<                    "  nDigits=" << cluster.digits->size()
+                     <<                    "  globalPos=(" << pos->X()
+                     <<                               ", " << pos->Y()
+                     <<                               ", " << pos->Z() << ")\n";
+            }
+            cout << "\n";
+        }
+
     }
 
+    // Note: This is counting the number of tracks across events.
+    //       Set `eventNumberMin` = `eventNumberMax` to count the number of tracks
+    //       in a single event.
     if (settings->tracks.countTracks) {
         cout << "INFO  Dumping digit counts for track IDs in range specified by\n"
              << "      settings.tracks.trackIdStart, settings.tracks.trackIdEnd:\n"
@@ -114,6 +137,7 @@ int main(int argc, char ** argv) {
         for (const auto & t : trackIdCounter) {
             cout << "        Track ID " << t.first << "\t" << t.second << "\n";
         }
+        cout << "\n";
     }
 
 

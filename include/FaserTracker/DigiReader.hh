@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
-#include <utility>
 #include <vector>
 #include "TVector3.h"
+#include "FaserTracker/Digit.hh"
 
 class TChain;
 
@@ -66,14 +66,15 @@ namespace FaserTracker {
         std::vector<double> * p_truthVertexPz = &truthVertexPz;
         std::vector<double> * p_truthVertexKE = &truthVertexKE;
 
+
         DigiReader(TChain & inputTree);
 
-        std::shared_ptr<std::vector<std::pair<TVector3, int>>> truthGlobalPositions() const;
+        std::shared_ptr<std::vector<Digit>> digits() const;
 
 
     private:
 
-        mutable std::shared_ptr<std::vector<std::pair<TVector3, int>>> _cachedTruthGlobalPositions = nullptr;
+        mutable std::shared_ptr<std::vector<Digit>> _cachedDigits = nullptr;
 
     };
 

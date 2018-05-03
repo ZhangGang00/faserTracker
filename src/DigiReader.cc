@@ -33,19 +33,17 @@ namespace FaserTracker {
         inputTree.SetBranchAddress("truth_vertex_ke", &p_truthVertexKE);
     }
 
-    /**
-     * Extracts truth global positions as `vector` of `TVector3`s.
-     * TODO: Store `Digit`s in faserMC output to avoid needing to do this.
-     */
-    shared_ptr<vector<pair<TVector3, int>>> DigiReader::truthGlobalPositions() const {
+    shared_ptr<vector<Digit>> DigiReader::digits() const {
 
-        if (_cachedTruthGlobalPositions != nullptr) {
-            return _cachedTruthGlobalPositions;
+        if (_cachedDigits != nullptr) {
+            return _cachedDigits;
         }
 
-        if (truthGlobalX.size() != truthGlobalY.size() ||
-            truthGlobalX.size() != truthGlobalZ.size() ||
-            truthGlobalX.size() != truthTrack.size())
+        uint nDigits = truthTrack.size();
+        if (truthPlane.size()   != nDigits ||
+            truthGlobalX.size() != nDigits ||
+            truthGlobalY.size() != nDigits ||
+            truthGlobalZ.size() != nDigits)
         {
             cout << "ERROR  DigiReader::truthGlobalPositions\n"
                  << "       truthGlobalX, truthGlobalY, truthGlobalZ must have the same size!\n"
@@ -53,17 +51,18 @@ namespace FaserTracker {
             throw runtime_error {"invalid global coordinate lists stored in `DigiReader`"};
         }
 
-        auto positions = make_shared<vector<pair<TVector3, int>>>();
+        auto digits = make_shared<vector<Digit>>();
 
         for (int i=0; i<truthGlobalX.size(); ++i) {
             TVector3 posVec = {truthGlobalX[i], truthGlobalY[i], truthGlobalZ[i]};
-            int trackId = truthTrack[i];
-            positions->push_back({posVec, trackId});
+
+            // Using charge = 1.0 for truth --> TODO: check if all weighted the same
+            digits->push_back({truthPlane[i], 1.0, posVec, truthTrack[i]});
         }
 
-        _cachedTruthGlobalPositions = positions;
+        _cachedDigits = digits;
 
-        return positions;
+        return digits;
 
     }
 }

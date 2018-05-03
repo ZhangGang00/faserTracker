@@ -13,8 +13,12 @@ namespace FaserTracker {
         } debug;
 
         struct {
+            std::string name = "faser";
+        } inputChain;
+
+        struct {
             int   eventNumberStart = -1;
-            int   eventNumberEnd = -1;
+            int   eventNumberEnd   = -1;
         } events;
 
         struct {
@@ -27,6 +31,17 @@ namespace FaserTracker {
             bool  plotTruth    = false;
             bool  compareTruth = false;
         } tracks;
+
+        struct {
+            double distanceTolerance = 0.01;
+            bool   dumpClusters      = false;
+        } digitClusters;
+
+        struct {
+        } trackFinding;
+
+        struct {
+        } trackFitting;
     
         Settings(const std::string & settingsFile);
     };

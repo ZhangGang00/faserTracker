@@ -6,6 +6,10 @@
         "tracks" : false
     },
 
+    "inputChain" : {
+        "name" : "hits"
+    },
+
     "events" : {
         "eventNumberStart" : 5,
         "eventNumberEnd"   : 5
@@ -14,11 +18,22 @@
     "tracks" : {
         "trackIdStart" : 0,
         "trackIdEnd"   : 50,
-        "countTracks"  : true,
-        "fitTracks"    : true,
+        "countTracks"  : false,
+        "fitTracks"    : false,
         "plotHits"     : false,
         "plotDigits"   : false,
-        "plotTruth"    : true,
+        "plotTruth"    : false,
         "compareTruth" : false
+    },
+
+    "digitClusters" : {
+        "distanceTolerance" : 0.01,
+        "dumpClusters"      : true
+    },
+
+    "trackFinding" : {
+    },
+
+    "trackFitting" : {
     }
 }
