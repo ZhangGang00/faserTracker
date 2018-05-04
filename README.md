@@ -37,3 +37,52 @@ For a list of all available options, run
 ./bin/find_tracks --help
 ```
 
+
+## Configuration settings
+
+Configuration options are specified in the `settings.json` file **in the `faser_tracker_run` directory**.
+
+ | Feature       | Setting             | Description
+ |:--------------|:--------------------|:-------------------------------------------
+ |        debug  | chain               | Set to `true` to print diagnostic info about the input chain.
+ |               |                     |
+ |               | hits                | Set to `true` to print diagnostic info about the hits.
+ |               |                     |
+ |               | digits              | Set to `true` to print diagnostic info about the digits.
+ |               |                     |
+ |               | tracks              | Set to `true` to print diagnostic info about the tracks.
+ |               |                     |
+ |        events | eventNumberStart    | Event (entry) number to start at (-1 to start with first event)
+ |               |                     |
+ |               | eventNumberEnd      | Event (entry) number to end at (-1 to end with last event)
+ |               |                     |
+ |        tracks | truthIdStart        | Starting truth ID of tracks to consider (-1 to start with lowest)
+ |               |                     |
+ |               | truthIdEnd          | Ending truth ID of tracks to consider (-1 to end with highest)
+ |               |                     |
+ |               | countTracks         | Set to `true` to print the total number of tracks
+ |               |                     |
+ |               | fitTracks           | Set to `true` to perform a global track fit in x vs. z for the hits or digits.
+ |               |                     |
+ |               | plotHits            | Set to `true` to plot hit positions.
+ |               |                     |
+ |               | plotDigits          | Set to `true` to plot digit position.
+ |               |                     |
+ |               | plotTruth           | Set to `true` to plot truth positions.
+ |               |                     |
+ |    clustering | distanceTolerance   | Maximum distance (in mm) allowed between points in cluster
+ |               |                     |
+ |               | dumpClusters        | Set to `true` to print information on clusters found.
+ |               |                     |
+ |  trackFinding | chargeThreshold     | Minimum charge (in fC) required for digit clusters
+ |               |                     |
+ |               | yTolerance          | Minimum distance (in mm) allowed for linear y-vs.-z band
+ |               |                     |
+ |               | findTruthTracks     | Set to `true` to find tracks using truth track IDs.
+ |               |                     |
+ |               | findClusterTracks   | Set to `true` to find tracks from digit clusters.
+ |               |                     |
+ |               | saveTracks          | Set to `true` to save y-vs.-z plots of found tracks.
+ |               |                     |
+ |  trackFitting | fitAndSaveTracks    | Set to `true` to fit and save x-vs.-z plots of tracks found.
+  
