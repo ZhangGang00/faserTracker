@@ -12,6 +12,10 @@ namespace FaserTracker {
 
     struct DigiReader {
 
+        TChain * inputChain;
+
+        long eventNumber = -1;
+
         std::vector<int>     digiPlane;
         std::vector<int>     digiModule;
         std::vector<int>     digiSensor;
@@ -68,6 +72,8 @@ namespace FaserTracker {
 
 
         DigiReader(TChain & inputTree);
+
+        void getEntry(long iEntry);
 
         std::shared_ptr<std::vector<Digit>> digits() const;
 

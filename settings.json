@@ -16,24 +16,29 @@
     },
 
     "tracks" : {
-        "trackIdStart" : 0,
-        "trackIdEnd"   : 50,
+        "truthIdStart" : -1,
+        "truthIdEnd"   : -1,
         "countTracks"  : false,
         "fitTracks"    : false,
         "plotHits"     : false,
         "plotDigits"   : false,
         "plotTruth"    : false,
-        "compareTruth" : false
     },
 
     "digitClusters" : {
-        "distanceTolerance" : 0.01,
-        "dumpClusters"      : true
+        "distanceTolerance" : 0.2,
+        "dumpClusters"      : false
     },
 
     "trackFinding" : {
+        "chargeThreshold"   : 0.5,
+        "yTolerance"        : 0.5,
+        "findTruthTracks"   : false,
+        "findClusterTracks" : false,
+        "saveTracks"        : false
     },
 
     "trackFitting" : {
+        "fitAndSaveTracks" : false
     }
 }

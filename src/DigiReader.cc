@@ -4,34 +4,56 @@
 
 namespace FaserTracker {
 
-    DigiReader::DigiReader(TChain & inputTree) {
-        inputTree.SetBranchAddress("digi_plane" , &p_digiPlane);
-        inputTree.SetBranchAddress("digi_module", &p_digiModule);
-        inputTree.SetBranchAddress("digi_sensor", &p_digiSensor);
-        inputTree.SetBranchAddress("digi_row"   , &p_digiRow);
-        inputTree.SetBranchAddress("digi_strip" , &p_digiStrip);
-        inputTree.SetBranchAddress("digi_charge", &p_digiCharge);
+    DigiReader::DigiReader(TChain & inputChain_) :
+        inputChain {&inputChain_}
+    {
+        inputChain->SetBranchAddress("digi_plane" , &p_digiPlane);
+        inputChain->SetBranchAddress("digi_module", &p_digiModule);
+        inputChain->SetBranchAddress("digi_sensor", &p_digiSensor);
+        inputChain->SetBranchAddress("digi_row"   , &p_digiRow);
+        inputChain->SetBranchAddress("digi_strip" , &p_digiStrip);
+        inputChain->SetBranchAddress("digi_charge", &p_digiCharge);
     
-        inputTree.SetBranchAddress("truth_plane"    , &p_truthPlane);
-        inputTree.SetBranchAddress("truth_module"   , &p_truthModule);
-        inputTree.SetBranchAddress("truth_sensor"   , &p_truthSensor);
-        inputTree.SetBranchAddress("truth_row"      , &p_truthRow);
-        inputTree.SetBranchAddress("truth_strip"    , &p_truthStrip);
-        inputTree.SetBranchAddress("truth_track"    , &p_truthTrack);
-        inputTree.SetBranchAddress("truth_global_x" , &p_truthGlobalX);
-        inputTree.SetBranchAddress("truth_global_y" , &p_truthGlobalY);
-        inputTree.SetBranchAddress("truth_global_z" , &p_truthGlobalZ);
-        inputTree.SetBranchAddress("truth_local_x"  , &p_truthLocalX);
-        inputTree.SetBranchAddress("truth_local_y"  , &p_truthLocalY);
-        inputTree.SetBranchAddress("truth_local_z"  , &p_truthLocalZ);
-        inputTree.SetBranchAddress("truth_vertex_x" , &p_truthVertexX);
-        inputTree.SetBranchAddress("truth_vertex_y" , &p_truthVertexY);
-        inputTree.SetBranchAddress("truth_vertex_z" , &p_truthVertexZ);
-        inputTree.SetBranchAddress("truth_vertex_px", &p_truthVertexPx);
-        inputTree.SetBranchAddress("truth_vertex_py", &p_truthVertexPy);
-        inputTree.SetBranchAddress("truth_vertex_pz", &p_truthVertexPz);
-        inputTree.SetBranchAddress("truth_vertex_ke", &p_truthVertexKE);
+        inputChain->SetBranchAddress("truth_plane"    , &p_truthPlane);
+        inputChain->SetBranchAddress("truth_module"   , &p_truthModule);
+        inputChain->SetBranchAddress("truth_sensor"   , &p_truthSensor);
+        inputChain->SetBranchAddress("truth_row"      , &p_truthRow);
+        inputChain->SetBranchAddress("truth_strip"    , &p_truthStrip);
+        inputChain->SetBranchAddress("truth_track"    , &p_truthTrack);
+        inputChain->SetBranchAddress("truth_global_x" , &p_truthGlobalX);
+        inputChain->SetBranchAddress("truth_global_y" , &p_truthGlobalY);
+        inputChain->SetBranchAddress("truth_global_z" , &p_truthGlobalZ);
+        inputChain->SetBranchAddress("truth_local_x"  , &p_truthLocalX);
+        inputChain->SetBranchAddress("truth_local_y"  , &p_truthLocalY);
+        inputChain->SetBranchAddress("truth_local_z"  , &p_truthLocalZ);
+        inputChain->SetBranchAddress("truth_vertex_x" , &p_truthVertexX);
+        inputChain->SetBranchAddress("truth_vertex_y" , &p_truthVertexY);
+        inputChain->SetBranchAddress("truth_vertex_z" , &p_truthVertexZ);
+        inputChain->SetBranchAddress("truth_vertex_px", &p_truthVertexPx);
+        inputChain->SetBranchAddress("truth_vertex_py", &p_truthVertexPy);
+        inputChain->SetBranchAddress("truth_vertex_pz", &p_truthVertexPz);
+        inputChain->SetBranchAddress("truth_vertex_ke", &p_truthVertexKE);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    void DigiReader::getEntry(long entry) {
+
+        if (inputChain == nullptr) {
+            cout << "ERROR  DigiReader::getEntry\n"
+                 << "       Unable to retrieve entry " << entry
+                 <<        " ... the input chain is null!\n"
+                 << "\n";
+
+            throw runtime_error {"null chain"};
+        }
+
+        inputChain->GetEntry(entry);
+        eventNumber = entry;
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
 
     shared_ptr<vector<Digit>> DigiReader::digits() const {
 
@@ -51,18 +73,18 @@ namespace FaserTracker {
             throw runtime_error {"invalid global coordinate lists stored in `DigiReader`"};
         }
 
-        auto digits = make_shared<vector<Digit>>();
+        auto digits_ = make_shared<vector<Digit>>();
 
-        for (int i=0; i<truthGlobalX.size(); ++i) {
+        for (uint i=0; i<truthGlobalX.size(); ++i) {
             TVector3 posVec = {truthGlobalX[i], truthGlobalY[i], truthGlobalZ[i]};
 
             // Using charge = 1.0 for truth --> TODO: check if all weighted the same
-            digits->push_back({truthPlane[i], 1.0, posVec, truthTrack[i]});
+            digits_->push_back({eventNumber, truthPlane[i], 1.0, posVec, truthTrack[i]});
         }
 
-        _cachedDigits = digits;
+        _cachedDigits = digits_;
 
-        return digits;
+        return digits_;
 
     }
 }

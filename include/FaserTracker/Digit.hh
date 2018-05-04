@@ -7,6 +7,8 @@ namespace FaserTracker {
 
     struct Digit {
 
+        long    eventNumber;
+
         // TODO: Implement `Digit`s using only (plane, module, sensor, row, strip) combo
         int     plane;
         //int     module;
@@ -19,7 +21,8 @@ namespace FaserTracker {
         TVector3  truthGlobalPos;
         int       truthTrackId;
 
-        Digit(int plane_, double charge_, TVector3 truthGlobalPos_, int truthTrackId_) :
+        Digit(long eventNumber_, int plane_, double charge_, TVector3 truthGlobalPos_, int truthTrackId_) :
+            eventNumber {eventNumber_},
             plane {plane_},
             charge {charge_},
             truthGlobalPos {truthGlobalPos_},

@@ -24,22 +24,27 @@ namespace FaserTracker {
         events.eventNumberEnd   = properties.get("events.eventNumberEnd", -1);
 
         // tracks
-        tracks.trackIdStart = properties.get("tracks.trackIdStart", -1);
-        tracks.trackIdEnd   = properties.get("tracks.trackIdEnd", -1);
+        tracks.truthIdStart = properties.get("tracks.truthIdStart", -1);
+        tracks.truthIdEnd   = properties.get("tracks.truthIdEnd", -1);
         tracks.countTracks  = properties.get("tracks.countTracks", false);
         tracks.fitTracks    = properties.get("tracks.fitTracks", false);
         tracks.plotHits     = properties.get("tracks.plotHits", false);
         tracks.plotDigits   = properties.get("tracks.plotDigits", false);
         tracks.plotTruth    = properties.get("tracks.plotTruth", false);
-        tracks.compareTruth = properties.get("tracks.compareTruth", false);
 
         // clustering
         digitClusters.distanceTolerance = properties.get("digitClusters.distanceTolerance", 0.01);
         digitClusters.dumpClusters      = properties.get("digitClusters.dumpClusters", false);
 
         // track finding
+        trackFinding.chargeThreshold   = properties.get("trackFinding.chargeThreshold", 0.5);
+        trackFinding.yTolerance        = properties.get("trackFinding.yTolerance", 0.5);
+        trackFinding.findTruthTracks   = properties.get("trackFinding.findTruthTracks", false);
+        trackFinding.findClusterTracks = properties.get("trackFinding.findClusterTracks", false);
+        trackFinding.saveTracks        = properties.get("trackFinding.saveTracks", false);
 
         // track fitting
+        trackFitting.fitAndSaveTracks = properties.get("trackFitting.fitAndSaveTracks", false);
 
 
         cout << "INFO  Using the following settings:\n"
@@ -53,21 +58,24 @@ namespace FaserTracker {
              << "        events.eventNumberStart = " << events.eventNumberStart << "\n"
              << "        events.eventNumberEnd   = " << events.eventNumberEnd << "\n"
              << "\n"
-             << "        tracks.trackIdStart = " << tracks.trackIdStart << "\n"
-             << "        tracks.trackIdEnd   = " << tracks.trackIdEnd << "\n"
+             << "        tracks.truthIdStart = " << tracks.truthIdStart << "\n"
+             << "        tracks.truthIdEnd   = " << tracks.truthIdEnd << "\n"
              << "        tracks.countTracks  = " << tracks.countTracks << "\n"
              << "        tracks.fitTracks    = " << tracks.fitTracks << "\n"
              << "        tracks.plotHits     = " << tracks.plotHits << "\n"
              << "        tracks.plotDigits   = " << tracks.plotDigits << "\n"
              << "        tracks.plotTruth    = " << tracks.plotTruth << "\n"
-             << "        tracks.compareTruth = " << tracks.compareTruth << "\n"
              << "\n"
              << "        digitClusters.distanceTolerance = " << digitClusters.distanceTolerance << "\n"
              << "        digitClusters.dumpClusters      = " << digitClusters.dumpClusters << "\n"
-             //<< "\n"
-             //<< "        trackFinding.blah = " << trackFinding.blah << "\n"
-             //<< "\n"
-             //<< "        trackFitting.blah = " << trackFitting.blah << "\n"
+             << "\n"
+             << "        trackFinding.chargeThreshold   = " << trackFinding.chargeThreshold << "\n"
+             << "        trackFinding.yTolerance        = " << trackFinding.yTolerance << "\n"
+             << "        trackFinding.findTruthTracks   = " << trackFinding.findTruthTracks << "\n"
+             << "        trackFinding.findClusterTracks = " << trackFinding.findClusterTracks << "\n"
+             << "        trackFinding.saveTracks        = " << trackFinding.saveTracks << "\n"
+             << "\n"
+             << "        trackFitting.fitAndSaveTracks = " << trackFitting.fitAndSaveTracks << "\n"
              << "\n";
     }
 

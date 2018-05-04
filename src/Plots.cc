@@ -27,8 +27,8 @@ namespace FaserTracker {
             const TVector3 & pos = digit.truthGlobalPos;
             int trackId = digit.truthTrackId;
 
-            if ((settings->tracks.trackIdStart > -1 && trackId <= settings->tracks.trackIdStart) ||
-                (settings->tracks.trackIdEnd   > -1 && trackId >= settings->tracks.trackIdEnd))
+            if ((settings->tracks.truthIdStart > -1 && trackId <= settings->tracks.truthIdStart) ||
+                (settings->tracks.truthIdEnd   > -1 && trackId >= settings->tracks.truthIdEnd))
             {
                 continue;
             }

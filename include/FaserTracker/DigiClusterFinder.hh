@@ -15,6 +15,9 @@ namespace FaserTracker {
 
         double distanceTolerance;
 
+        // TODO: Also incorporate charge deposited
+
+
         DigiClusterFinder(double distanceTolerance_) :
             distanceTolerance {distanceTolerance_}
         {

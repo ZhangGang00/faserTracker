@@ -1,8 +1,9 @@
 #pragma once
 
+#include "FaserTracker/DigiCluster.hh"
+#include "FaserTracker/Digit.hh"
 #include <memory>
 #include <vector>
-#include "FaserTracker/Digit.hh"
 
 class TVector3;
 
@@ -14,16 +15,28 @@ namespace FaserTracker {
      */
     struct DigiCluster {
 
-        int plane;
+        long    eventNumber;
+        int     plane;
+        double  charge;
+        int     truthTrackId;
+
         std::shared_ptr<std::vector<Digit>> digits;
 
         DigiCluster(int plane_) :
-            plane {plane_}
+            eventNumber{-1},
+            plane {plane_},
+            charge {0},
+            truthTrackId {-1},
+            digits {std::make_shared<std::vector<Digit>>()}
         {
-            digits = std::make_shared<std::vector<Digit>>();
         }
 
+        void addDigit(const Digit & digit, bool isTruth=false);
+
         std::shared_ptr<TVector3> globalPosition() const;
+
+        void print() const;
+        void printTruthTrackIds() const;
 
     private:
 

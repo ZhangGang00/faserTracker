@@ -42,7 +42,7 @@ namespace FaserTracker {
                 for (DigiCluster & cluster : *clusters) {
                     for (Digit & digit : *cluster.digits) {
                         if ((posI - *digit.globalPosition()).Mag() < distanceTolerance) {
-                            cluster.digits->push_back(digitI);
+                            cluster.addDigit(digitI);
                             clusterMatched = true;
                             break;
                         }
@@ -53,7 +53,7 @@ namespace FaserTracker {
                 if (!clusterMatched) {
                     // Start new cluster on plane `iPlane`
                     clusters->push_back({iPlane});
-                    clusters->back().digits->push_back(digitI);
+                    clusters->back().addDigit(digitI);
                 }
             }
         }
