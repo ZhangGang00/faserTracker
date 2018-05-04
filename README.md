@@ -74,6 +74,8 @@ Configuration options are specified in the `settings.json` file **in the `faser_
  |               |                     |
  |               | dumpClusters        | Set to `true` to print information on clusters found.
  |               |                     |
+ |               | dumpTruthTrackIds   | Set to `true` to print truth track IDs of digits in clusters.
+ |               |                     |
  |  trackFinding | chargeThreshold     | Minimum charge (in fC) required for digit clusters
  |               |                     |
  |               | yTolerance          | Minimum distance (in mm) allowed for linear y-vs.-z band

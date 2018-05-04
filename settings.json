@@ -22,12 +22,13 @@
         "fitTracks"    : false,
         "plotHits"     : false,
         "plotDigits"   : false,
-        "plotTruth"    : false,
+        "plotTruth"    : false
     },
 
     "digitClusters" : {
         "distanceTolerance" : 0.2,
-        "dumpClusters"      : false
+        "dumpClusters"      : false,
+        "dumpTruthTrackIds" : false
     },
 
     "trackFinding" : {

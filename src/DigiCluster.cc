@@ -74,7 +74,7 @@ namespace FaserTracker {
 
     void DigiCluster::printTruthTrackIds() const {
 
-        cout << "    Truth track IDs in `DigiCluster::digits`\n"
+        cout << "    Truth track IDs in `DigiCluster::digits` in plane " << plane << "\n"
              << "    ";
 
         for (const Digit & digit : *digits) {

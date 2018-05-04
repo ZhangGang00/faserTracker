@@ -35,6 +35,7 @@ namespace FaserTracker {
         // clustering
         digitClusters.distanceTolerance = properties.get("digitClusters.distanceTolerance", 0.01);
         digitClusters.dumpClusters      = properties.get("digitClusters.dumpClusters", false);
+        digitClusters.dumpTruthTrackIds = properties.get("digitClusters.dumpTruthTrackIds", false);
 
         // track finding
         trackFinding.chargeThreshold   = properties.get("trackFinding.chargeThreshold", 0.5);
@@ -68,6 +69,7 @@ namespace FaserTracker {
              << "\n"
              << "        digitClusters.distanceTolerance = " << digitClusters.distanceTolerance << "\n"
              << "        digitClusters.dumpClusters      = " << digitClusters.dumpClusters << "\n"
+             << "        digitClusters.dumpTruthTrackIds = " << digitClusters.dumpTruthTrackIds << "\n"
              << "\n"
              << "        trackFinding.chargeThreshold   = " << trackFinding.chargeThreshold << "\n"
              << "        trackFinding.yTolerance        = " << trackFinding.yTolerance << "\n"

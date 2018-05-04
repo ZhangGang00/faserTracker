@@ -112,20 +112,28 @@ int main(int argc, char ** argv) {
 
 
         if (settings->digitClusters.dumpClusters ||
+            settings->digitClusters.dumpTruthTrackIds ||
             settings->trackFinding.findClusterTracks)
         {
             FaserTracker::DigiClusterFinder dcf {settings->digitClusters.distanceTolerance};
             shared_ptr<vector<FaserTracker::DigiCluster>> digiClusters = dcf.findDigitClusters(digiReader);
 
             if (settings->digitClusters.dumpClusters) {
-
                 cout << "INFO  Dumping digit clusters\n\n";
 
                 for (const FaserTracker::DigiCluster & cluster : *digiClusters) {
                     cluster.print();
                 }
                 cout << "\n";
+            }
 
+            if (settings->digitClusters.dumpTruthTrackIds) {
+                cout << "INFO  Dumping truth track IDs for digits in clusters\n\n";
+
+                for (const FaserTracker::DigiCluster & cluster : *digiClusters) {
+                    cluster.printTruthTrackIds();
+                }
+                cout << "\n";
             }
 
 

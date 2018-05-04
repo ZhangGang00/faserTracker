@@ -33,8 +33,9 @@ namespace FaserTracker {
         } tracks;
 
         struct {
-            double distanceTolerance = 0.01;
+            double distanceTolerance = 0.2;
             bool   dumpClusters      = false;
+            bool   dumpTruthTrackIds = false;
         } digitClusters;
 
         struct {
