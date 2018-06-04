@@ -20,6 +20,9 @@ namespace FaserTracker {
         double  charge;
         int     truthTrackId;
 
+        double translatedParameters [5];
+        double covarianceMatrix [5][5];
+
         std::shared_ptr<std::vector<Digit>> digits;
 
         DigiCluster(int plane_) :
@@ -37,6 +40,8 @@ namespace FaserTracker {
 
         void print() const;
         void printTruthTrackIds() const;
+
+        void extractParameters();
 
     private:
 
