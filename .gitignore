@@ -1,3 +1,7 @@
+# Build and run directories
+*build/
+*run/
+
 # Prerequisites
 *.d
 

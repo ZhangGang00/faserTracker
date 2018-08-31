@@ -1,55 +1,33 @@
 #!/bin/bash
 
-# Instructions:
-#   Set the following environment variables to the locations decribed below.
-
 # Directory containing faser_tracker package
-export FASER_BASE_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
+export FASER_TRACKER_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
+export LD_LIBRARY_PATH="${FASER_TRACKER_DIR}/faser_tracker_run/lib64:$LD_LIBRARY_PATH"
 
-# Directory containing cmake executable (comment out if not needed)
+# TODO: allow for more general options instead of hardcoding lxplus setup
+# lxplus setup
+platform=x86_64-slc6-gcc62-opt
+view=/cvmfs/sft.cern.ch/lcg/views/LCG_90a/${platform}
+
+source ${view}/setup.sh
+export BOOST_ROOT="${view}"
+export DD4hep_DIR="${view}"
+export EIGEN_INCLUDE_DIR="${view}/include/eigen3"
+export PYTHIA8_INCLUDE_DIR="${view}/include"
+export PYTHIA8_LIBRARY_DIR="${view}/lib"
+
+
+################################################################################
+# Location-specific settings: set the following environment variables to the as
+# indicated.
+#
+
+# NB: The version of the default `cmake` with the above lxplus setup is too low.
+# Directory containing cmake executable
 export PATH="$HOME/software/cmake-3.11.0-install/bin:$PATH"
 
 
-echo "Configuring Geant4..."
-
-# Geant4 package directory - obtain from http://www.geant4.org/geant4
-export GEANT4_DIR="$HOME/software/geant4.10.04.p01"
-
-# Geant4 build directory
-export GEANT4_BUILD_DIR="$HOME/software/geant4.10.04.p01-build"
-
-# Geant4 install directory
-export GEANT4_INSTALL_DIR="$HOME/software/geant4.10.04.p01-install"
-
-# Add Geant4 lib path to `LD_LIBRARY_PATH`
-export LD_LIBRARY_PATH="$GEANT4_INSTALL_DIR/lib64:$LD_LIBRARY_PATH"
-
-# Set up Geant4 datasets
-echo "Setting up Geant4 datasets..."
-source $GEANT4_INSTALL_DIR/share/Geant4-10.4.1/geant4make/geant4make.sh
-
-
-#TODO: See if the following ACTS setup scripts can be used.
-#      NB: They set up an incompatible version of ROOT even
-#          if the ROOT setup below is used.
-# ACTS
-#echo "Configuring ACTS..."
-#source $HOME/software/acts-core/CI/setup_lcg91.sh
-#source $HOME/software/acts-core-install/bin/setup.sh
-
-
-#TODO: Get faserMC package access working.
-#      This requires adding cmake config to the faserMC package.
-# faserMC package
-#echo "Configuring faserMC..."
-#export LD_LIBRARY_PATH="$HOME/Desktop/faser/run/lib:$LD_LIBRARY_PATH"
-
-
-# ROOT configuration - see https://root.cern.ch
-echo "Configuring ROOT..."
-export ROOTSYS="$HOME/software/root"
-export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
-export PATH="$ROOTSYS/bin:$PATH"
+# End of location-specific settings
+################################################################################
 
 echo "Done."
-

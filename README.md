@@ -6,7 +6,7 @@ Keep your tracks from getting out of *fase*.
 ## Prerequisites
 
 The following are required:
- * [cmake (version 2.6 or later)](https://cmake.org)
+ * [cmake (version 3.5 or later)](https://cmake.org)
  * [ROOT (version 6)](https://root.cern.ch)
  * [Geant4](http://www.geant4.org/geant4)
  * [A Common Tracking Software (ACTS)](http://acts.web.cern.ch/ACTS)
@@ -16,17 +16,14 @@ The following are required:
 ## Installation
 
 After setting the environment variables in the `set_up_environment.sh` script
-to the correct locations, run the following to set up the environment and compile
-the `faser_tracker` package:
-
+to the correct locations, run
 ```
-mv set_up_environment.sh make_faser_tracker.sh ..
-cd ..
-. set_up_environment.sh && . make_faser_tracker.sh
+source make.sh  # sources `set_up_environment.sh`
 ```
+to set up the environment and compile the `faser_tracker` package.
 
-If the above commands complete successfully, you should be taken to the
-`faser_tracker_run` directory, where you can run
+If the above completes successfully, `faser_tracker` should be installed and you
+should be taken to the `faser_tracker_run` directory, where you can run
 ```
 ./bin/find_tracks -i FILENAME [other flags]
 ```
@@ -36,6 +33,13 @@ For a list of all available options, run
 ```
 ./bin/find_tracks --help
 ```
+
+To do a clean rebuild of `faser_tracker` run
+```
+source make.sh --clean
+```
+This wipes the `faser_tracker_build` and `faser_tracker_run` directories and
+compiles `faser_tracker` and its dependencies from scratch.
 
 
 ## Configuration settings

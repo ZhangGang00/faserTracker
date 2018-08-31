@@ -6,8 +6,9 @@
         "tracks" : false
     },
 
-    "inputChain" : {
-        "name" : "hits"
+    "input" : {
+        "eventTreeName"    : "events",
+        "geometryTreeName" : "geo"
     },
 
     "events" : {

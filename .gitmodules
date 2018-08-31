@@ -1,0 +1,9 @@
+[submodule "faserMC"]
+	path = faser_tracker/external/faserMC
+	url = https://github.com/asoffa/faserMC.git
+[submodule "acts-core"]
+	path = faser_tracker/external/acts-core
+	url = https://gitlab.cern.ch/acts/acts-core.git
+[submodule "acts-fatras"]
+	path = faser_tracker/external/acts-fatras
+	url = https://gitlab.cern.ch/acts/acts-fatras.git

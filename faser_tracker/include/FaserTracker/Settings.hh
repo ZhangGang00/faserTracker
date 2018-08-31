@@ -14,8 +14,9 @@ namespace FaserTracker {
         } debug;
 
         struct {
-            std::string  name = "faser";
-        } inputChain;
+            std::string  eventTreeName    = "events";
+            std::string  geometryTreeName = "events";
+        } input;
 
         struct {
             int  eventNumberStart = -1;

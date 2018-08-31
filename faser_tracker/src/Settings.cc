@@ -17,7 +17,8 @@ namespace FaserTracker {
         debug.tracks = properties.get("debug.tracks", false);
 
         // input chain
-        inputChain.name = properties.get("inputChain.name", "hits");
+        input.eventTreeName    = properties.get("input.eventTreeName", "events");
+        input.geometryTreeName = properties.get("input.geometryTreeName", "geo");
 
         // events
         events.eventNumberStart = properties.get("events.eventNumberStart", -1);
@@ -54,7 +55,8 @@ namespace FaserTracker {
              << "        debug.hits   = " << debug.hits   << "\n"
              << "        debug.tracks = " << debug.tracks << "\n"
              << "\n"
-             << "        inputChain.name = " << inputChain.name << "\n"
+             << "        input.eventTreeName   = " << input.eventTreeName << "\n"
+             << "        input.geomtryTreeName = " << input.geometryTreeName << "\n"
              << "\n"
              << "        events.eventNumberStart = " << events.eventNumberStart << "\n"
              << "        events.eventNumberEnd   = " << events.eventNumberEnd << "\n"
