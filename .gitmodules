@@ -1,9 +1,8 @@
-[submodule "faserMC"]
+[submodule "faser_tracker/external/faserMC"]
 	path = faser_tracker/external/faserMC
 	url = https://github.com/asoffa/faserMC.git
-[submodule "acts-core"]
+	branch = space_points
+[submodule "faser_tracker/external/acts-core"]
 	path = faser_tracker/external/acts-core
 	url = https://gitlab.cern.ch/acts/acts-core.git
-[submodule "acts-fatras"]
-	path = faser_tracker/external/acts-fatras
-	url = https://gitlab.cern.ch/acts/acts-fatras.git
+	branch = release-0.07.00

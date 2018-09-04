@@ -22,6 +22,8 @@ find_package(Threads REQUIRED)
 find_package(Boost 1.64 REQUIRED COMPONENTS program_options)
 find_package(ROOT 6.10 REQUIRED COMPONENTS ${ROOT_COMPONENTS})
 
+# faserMC
+add_subdirectory(external/faserMC)
 
 # acts-core and acts-fatras
 set(ACTS_BUILD_DOC OFF CACHE BOOL "Build ACTS documentation")
@@ -65,15 +67,16 @@ add_subdirectory(external/acts-core)
 #target_link_libraries(FaserTrackerClassesDict PUBLIC ${ROOT_LIBRARIES})
 #install(TARGETS FaserTrackerClassesDict LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
+
 file(GLOB_RECURSE FaserTracker_files "src/*.cc" "include/*.hh")
 add_library(FaserTracker SHARED ${FaserTracker_files})
 target_include_directories (FaserTracker PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/> $<INSTALL_INTERFACE:include>)
 target_include_directories(FaserTracker PUBLIC ${ROOT_INCLUDE_DIRS})
-target_link_libraries(FaserTracker PUBLIC ACTSCore)
+target_link_libraries(FaserTracker PUBLIC ActsCore)
 target_link_libraries(FaserTracker PUBLIC ${ROOT_LIBRARIES})
 install(TARGETS FaserTracker LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+#install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 add_subdirectory(util)
 
