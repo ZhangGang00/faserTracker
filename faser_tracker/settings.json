@@ -33,6 +33,7 @@
     },
 
     "trackFinding" : {
+        "strategy"          : "truth"
         "chargeThreshold"   : 0.5,
         "yTolerance"        : 0.5,
         "findTruthTracks"   : false,
@@ -41,6 +42,7 @@
     },
 
     "trackFitting" : {
+        "strategy"         : "global"
         "fitAndSaveTracks" : false
     }
 }

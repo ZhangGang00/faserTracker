@@ -1,7 +1,6 @@
 // adapted from Geant4 example
 
 #include "FaserTracker/DigiReader.hh"
-#include "FaserTracker/HitInfo.hh"
 //#include "FaserTracker/TestTrackFit.hh"
 #include "FaserTracker/Plots.hh"
 #include "FaserTracker/DigiClusterFinder.hh"

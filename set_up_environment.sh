@@ -30,4 +30,6 @@ export PATH="$HOME/software/cmake-3.11.0-install/bin:$PATH"
 # End of location-specific settings
 ################################################################################
 
+export PATH="$FASER_TRACKER_DIR/faser_tracker_run/bin:$PATH"
+
 echo "Done."

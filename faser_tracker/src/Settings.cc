@@ -11,14 +11,18 @@ namespace FaserTracker {
         read_json(settingsFile, properties);
         cout << "INFO  Loaded settings file: " << settingsFile << "\n";
 
-        // debug
-        debug.chain  = properties.get("debug.chain", false);
-        debug.hits   = properties.get("debug.hits", false);
-        debug.tracks = properties.get("debug.tracks", false);
-
-        // input chain
+        // input
+        input.fileName         = properties.get("input.fileName", "FaserMCEvent_tracking.root");
         input.eventTreeName    = properties.get("input.eventTreeName", "events");
         input.geometryTreeName = properties.get("input.geometryTreeName", "geo");
+
+        // output
+        output.fileName = properties.get("output.fileName", "faser_tracker_out.root");
+
+        // debug
+        debug.input       = properties.get("debug.input", false);
+        debug.spacePoints = properties.get("debug.spacePoints", false);
+        debug.tracks      = properties.get("debug.tracks", false);
 
         // events
         events.eventNumberStart = properties.get("events.eventNumberStart", -1);
@@ -27,59 +31,35 @@ namespace FaserTracker {
         // tracks
         tracks.truthIdStart = properties.get("tracks.truthIdStart", -1);
         tracks.truthIdEnd   = properties.get("tracks.truthIdEnd", -1);
-        tracks.countTracks  = properties.get("tracks.countTracks", false);
-        tracks.fitTracks    = properties.get("tracks.fitTracks", false);
-        tracks.plotHits     = properties.get("tracks.plotHits", false);
-        tracks.plotDigits   = properties.get("tracks.plotDigits", false);
-        tracks.plotTruth    = properties.get("tracks.plotTruth", false);
-
-        // clustering
-        digitClusters.distanceTolerance = properties.get("digitClusters.distanceTolerance", 0.01);
-        digitClusters.dumpClusters      = properties.get("digitClusters.dumpClusters", false);
-        digitClusters.dumpTruthTrackIds = properties.get("digitClusters.dumpTruthTrackIds", false);
 
         // track finding
-        trackFinding.chargeThreshold   = properties.get("trackFinding.chargeThreshold", 0.5);
-        trackFinding.yTolerance        = properties.get("trackFinding.yTolerance", 0.5);
-        trackFinding.findTruthTracks   = properties.get("trackFinding.findTruthTracks", false);
-        trackFinding.findClusterTracks = properties.get("trackFinding.findClusterTracks", false);
-        trackFinding.saveTracks        = properties.get("trackFinding.saveTracks", false);
+        trackFinding.method = properties.get("trackFinding.method", "truth");
 
         // track fitting
-        trackFitting.fitAndSaveTracks = properties.get("trackFitting.fitAndSaveTracks", false);
+        trackFitting.method = properties.get("trackFitting.method", "global");
 
 
         cout << "INFO  Using the following settings:\n"
              << "\n"
-             << "        debug.chain  = " << debug.chain  << "\n"
-             << "        debug.hits   = " << debug.hits   << "\n"
-             << "        debug.tracks = " << debug.tracks << "\n"
+             << "        debug.input       = " << debug.input << "\n"
+             << "        debug.spacePoints = " << debug.spacePoints << "\n"
+             << "        debug.tracks      = " << debug.tracks << "\n"
              << "\n"
+             << "        input.fileName        = " << input.fileName << "\n"
              << "        input.eventTreeName   = " << input.eventTreeName << "\n"
              << "        input.geomtryTreeName = " << input.geometryTreeName << "\n"
+             << "\n"
+             << "        output.fileName = " << output.fileName << "\n"
              << "\n"
              << "        events.eventNumberStart = " << events.eventNumberStart << "\n"
              << "        events.eventNumberEnd   = " << events.eventNumberEnd << "\n"
              << "\n"
              << "        tracks.truthIdStart = " << tracks.truthIdStart << "\n"
              << "        tracks.truthIdEnd   = " << tracks.truthIdEnd << "\n"
-             << "        tracks.countTracks  = " << tracks.countTracks << "\n"
-             << "        tracks.fitTracks    = " << tracks.fitTracks << "\n"
-             << "        tracks.plotHits     = " << tracks.plotHits << "\n"
-             << "        tracks.plotDigits   = " << tracks.plotDigits << "\n"
-             << "        tracks.plotTruth    = " << tracks.plotTruth << "\n"
              << "\n"
-             << "        digitClusters.distanceTolerance = " << digitClusters.distanceTolerance << "\n"
-             << "        digitClusters.dumpClusters      = " << digitClusters.dumpClusters << "\n"
-             << "        digitClusters.dumpTruthTrackIds = " << digitClusters.dumpTruthTrackIds << "\n"
+             << "        trackFinding.method = " << trackFinding.method << "\n"
              << "\n"
-             << "        trackFinding.chargeThreshold   = " << trackFinding.chargeThreshold << "\n"
-             << "        trackFinding.yTolerance        = " << trackFinding.yTolerance << "\n"
-             << "        trackFinding.findTruthTracks   = " << trackFinding.findTruthTracks << "\n"
-             << "        trackFinding.findClusterTracks = " << trackFinding.findClusterTracks << "\n"
-             << "        trackFinding.saveTracks        = " << trackFinding.saveTracks << "\n"
-             << "\n"
-             << "        trackFitting.fitAndSaveTracks = " << trackFitting.fitAndSaveTracks << "\n"
+             << "        trackFitting.method = " << trackFitting.method << "\n"
              << "\n";
     }
 

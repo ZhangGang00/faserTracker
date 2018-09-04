@@ -7,10 +7,17 @@ Keep your tracks from getting out of *fase*.
 
 The following are required:
  * [cmake (version 3.5 or later)](https://cmake.org)
+ * [Boost (version 1.62 or later](https://www.boost.org)
+ * [Eigen (version 3.2.9 or later)](http://eigen.tuxfamily.org)
  * [ROOT (version 6)](https://root.cern.ch)
- * [Geant4](http://www.geant4.org/geant4)
  * [A Common Tracking Software (ACTS)](http://acts.web.cern.ch/ACTS)
  * [faserMC](https://github.com/asoffa/faserMC)
+
+The `Boost`, `Eigen`, and `ROOT` dependencies are available by setting up the
+default `lxplus` environment in `set_up_environment.sh` (see below), and the
+`ACTS` and `faserMC` dependencies are installed by running the `make.sh` build
+script (see below). Therefore, if working on lxplus, the only dependency that
+needs manual installation is `cmake`.
 
 
 ## Installation
@@ -25,9 +32,14 @@ to set up the environment and compile the `faser_tracker` package.
 If the above completes successfully, `faser_tracker` should be installed and you
 should be taken to the `faser_tracker_run` directory, where you can run
 ```
-./bin/find_tracks -i FILENAME [other flags]
+./bin/find_tracks -i FILENAME [other flags]  # or just `find_tracks [flags]`
 ```
 where `FILENAME` is the name of a ROOT file produced by the `faserMC` package.
+
+To set up the environment in a new shell, run
+```
+source set_up_environment.sh
+```
 
 For a list of all available options, run
 ```
@@ -48,11 +60,20 @@ Configuration options are specified in the `settings.json` file **in the `faser_
 
  | Feature       | Setting             | Description
  |:--------------|:--------------------|:-------------------------------------------
- |        debug  | chain               | Set to `true` to print diagnostic info about the input chain.
+ |         input | fileName            | Name of file produced by `faserMC` tracking output.
+ |               |                     | (default: `FaserMCEvent_tracking.root`)
  |               |                     |
- |               | hits                | Set to `true` to print diagnostic info about the hits.
+ |               | eventTreeName       | Name of events tree from `faserMC` tracking output.
+ |               |                     | (default: `events`)
  |               |                     |
- |               | digits              | Set to `true` to print diagnostic info about the digits.
+ |               | geometryTreeName    | Name of geomtry tree from `faserMC` tracking output.
+ |               |                     | (default: `geo`)
+ |               |                     |
+ |        output | fileName            | Set to `true` to print diagnostic info about the input chain.
+ |               |                     |
+ |         debug | chain               | Set to `true` to print diagnostic info about the input chain.
+ |               |                     |
+ |               | spacePoints         | Set to `true` to print diagnostic info about the space points.
  |               |                     |
  |               | tracks              | Set to `true` to print diagnostic info about the tracks.
  |               |                     |
@@ -64,31 +85,16 @@ Configuration options are specified in the `settings.json` file **in the `faser_
  |               |                     |
  |               | truthIdEnd          | Ending truth ID of tracks to consider (-1 to end with highest)
  |               |                     |
- |               | countTracks         | Set to `true` to print the total number of tracks
+ |  trackFinding | method              | Options:
+ |               |                     |   `none`   | disable track finding
+ |               |                     |   `truth`  | use truth tracks
+ |               |                     |   `global` | use global chi-square approach
+ |               |                     |   `seed`   | use seed finder
+ |               |                     |   `all`    | use all of `truth`, `global`, and `seed` methods
  |               |                     |
- |               | fitTracks           | Set to `true` to perform a global track fit in x vs. z for the hits or digits.
- |               |                     |
- |               | plotHits            | Set to `true` to plot hit positions.
- |               |                     |
- |               | plotDigits          | Set to `true` to plot digit position.
- |               |                     |
- |               | plotTruth           | Set to `true` to plot truth positions.
- |               |                     |
- |    clustering | distanceTolerance   | Maximum distance (in mm) allowed between points in cluster
- |               |                     |
- |               | dumpClusters        | Set to `true` to print information on clusters found.
- |               |                     |
- |               | dumpTruthTrackIds   | Set to `true` to print truth track IDs of digits in clusters.
- |               |                     |
- |  trackFinding | chargeThreshold     | Minimum charge (in fC) required for digit clusters
- |               |                     |
- |               | yTolerance          | Minimum distance (in mm) allowed for linear y-vs.-z band
- |               |                     |
- |               | findTruthTracks     | Set to `true` to find tracks using truth track IDs.
- |               |                     |
- |               | findClusterTracks   | Set to `true` to find tracks from digit clusters.
- |               |                     |
- |               | saveTracks          | Set to `true` to save y-vs.-z plots of found tracks.
- |               |                     |
- |  trackFitting | fitAndSaveTracks    | Set to `true` to fit and save x-vs.-z plots of tracks found.
-  
+ |  trackFitting | method              | Options (overridden to `none` if track finding is disabled)
+ |               |                     |   `none`   | disable track fitting
+ |               |                     |   `global` | use global chi-square approach
+ |               |                     |   `Kalman` | use iterative Kalman filter approach
+ |               |                     |   `all`    | use both `global` and `Kalman` methods
+

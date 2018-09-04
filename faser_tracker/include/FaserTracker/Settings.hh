@@ -7,16 +7,20 @@ namespace FaserTracker {
     struct Settings {
 
         struct {
-            bool  chain  = false;
-            bool  hits   = false;
-            bool  digits = false;
-            bool  tracks = false;
-        } debug;
+            std::string  fileName         = "FaserMCEvent_tracking.root";
+            std::string  eventTreeName    = "events";
+            std::string  geometryTreeName = "geo";
+        } input;
 
         struct {
-            std::string  eventTreeName    = "events";
-            std::string  geometryTreeName = "events";
-        } input;
+            std::string  fileName = "faser_tracker_out.root";
+        } output;
+
+        struct {
+            bool  input       = false;
+            bool  spacePoints = false;
+            bool  tracks      = false;
+        } debug;
 
         struct {
             int  eventNumberStart = -1;
@@ -26,29 +30,14 @@ namespace FaserTracker {
         struct {
             int   truthIdStart = 2;
             int   truthIdEnd   = 2;
-            bool  countTracks  = false;
-            bool  fitTracks    = false;
-            bool  plotHits     = false;
-            bool  plotDigits   = false;
-            bool  plotTruth    = false;
         } tracks;
 
         struct {
-            double distanceTolerance = 0.2;
-            bool   dumpClusters      = false;
-            bool   dumpTruthTrackIds = false;
-        } digitClusters;
-
-        struct {
-            double  chargeThreshold   = 0.5;
-            double  yTolerance        = 0.5;
-            bool    findTruthTracks   = false;
-            bool    findClusterTracks = false;
-            bool    saveTracks        = false;
+            std::string  method     = "none";
         } trackFinding;
 
         struct {
-            bool  fitAndSaveTracks = false;
+            std::string  method     = "none";
         } trackFitting;
     
         Settings(const std::string & settingsFile);
