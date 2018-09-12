@@ -7,7 +7,7 @@ Keep your tracks from getting out of *fase*.
 
 The following are required:
  * [cmake (version 3.5 or later)](https://cmake.org)
- * [Boost (version 1.62 or later](https://www.boost.org)
+ * [Boost (version 1.62 or later)](https://www.boost.org)
  * [Eigen (version 3.2.9 or later)](http://eigen.tuxfamily.org)
  * [ROOT (version 6)](https://root.cern.ch)
  * [A Common Tracking Software (ACTS)](http://acts.web.cern.ch/ACTS)
@@ -69,7 +69,7 @@ Configuration options are specified in the `settings.json` file **in the `faser_
  |               | geometryTreeName    | Name of geomtry tree from `faserMC` tracking output.
  |               |                     | (default: `geo`)
  |               |                     |
- |        output | fileName            | Set to `true` to print diagnostic info about the input chain.
+ |        output | fileName            | Set to `true` to print diagnostic info about the input file.
  |               |                     |
  |         debug | chain               | Set to `true` to print diagnostic info about the input chain.
  |               |                     |
@@ -86,15 +86,15 @@ Configuration options are specified in the `settings.json` file **in the `faser_
  |               | truthIdEnd          | Ending truth ID of tracks to consider (-1 to end with highest)
  |               |                     |
  |  trackFinding | method              | Options:
- |               |                     |   `none`   | disable track finding
- |               |                     |   `truth`  | use truth tracks
- |               |                     |   `global` | use global chi-square approach
- |               |                     |   `seed`   | use seed finder
- |               |                     |   `all`    | use all of `truth`, `global`, and `seed` methods
+ |               |                     |   `none`  : disable track finding
+ |               |                     |   `truth` : use truth tracks
+ |               |                     |   `global`: use global chi-square approach
+ |               |                     |   `seed`  : use seed finder
+ |               |                     |   `all`   : use all of `truth`, `global`, and `seed` methods
  |               |                     |
  |  trackFitting | method              | Options (overridden to `none` if track finding is disabled)
- |               |                     |   `none`   | disable track fitting
- |               |                     |   `global` | use global chi-square approach
- |               |                     |   `Kalman` | use iterative Kalman filter approach
- |               |                     |   `all`    | use both `global` and `Kalman` methods
+ |               |                     |   `none`   : disable track fitting
+ |               |                     |   `global` : use global chi-square approach
+ |               |                     |   `Kalman` : use iterative Kalman filter approach
+ |               |                     |   `all`    : use both `global` and `Kalman` methods
 

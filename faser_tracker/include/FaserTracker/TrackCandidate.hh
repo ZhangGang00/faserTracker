@@ -1,41 +1,37 @@
 #pragma once
 
+#include "FaserTrackerSpacePoint.hh"
+#include "FaserTrackerGeometry.hh"
+
+#include <memory>
 #include <string>
 #include <vector>
-#include "FaserTracker/DigiCluster.hh"
 
 
 namespace FaserTracker {
 
-    /**
-     * A `DigiCluster` is a collection of nearby digits in the same FASER plane.
-     */
+    using SpacePoint = FaserTrackerSpacePoint;
+
+
     struct TrackCandidate {
 
         long eventNumber;
-        std::shared_ptr<std::vector<DigiCluster>> digiClusters;
-        std::string label;
+        std::shared_ptr<std::vector<SpacePoint>> spacePoints;
         int truthTrackId;
-
-        //TODO: read in this info from faserMC/faserGeo.mac
-        static constexpr int N_PLANES    = 5;
-        static constexpr int START_PLANE = 0;
-        static constexpr int END_PLANE   = N_PLANES - 1;
 
 
         TrackCandidate() :
             eventNumber {-1},
-            digiClusters {std::make_shared<std::vector<DigiCluster>>()},
-            label {""},
+            spacePoints {std::make_shared<std::vector<SpacePoint>>()},
             truthTrackId {-1}
         {
         }
 
-        void addCluster(const DigiCluster & cluster);
+        //void addCluster(const DigiCluster & cluster);
 
         bool isValid() const;
 
-        void dumpDigitClusters() const;
+        //void dumpDigitClusters() const;
 
     };
 

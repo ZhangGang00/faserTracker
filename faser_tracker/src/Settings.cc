@@ -33,10 +33,10 @@ namespace FaserTracker {
         tracks.truthIdEnd   = properties.get("tracks.truthIdEnd", -1);
 
         // track finding
-        trackFinding.method = properties.get("trackFinding.method", "truth");
+        trackFinding.strategy = properties.get("trackFinding.strategy", "truth");
 
         // track fitting
-        trackFitting.method = properties.get("trackFitting.method", "global");
+        trackFitting.strategy = properties.get("trackFitting.strategy", "global");
 
 
         cout << "INFO  Using the following settings:\n"
@@ -57,9 +57,9 @@ namespace FaserTracker {
              << "        tracks.truthIdStart = " << tracks.truthIdStart << "\n"
              << "        tracks.truthIdEnd   = " << tracks.truthIdEnd << "\n"
              << "\n"
-             << "        trackFinding.method = " << trackFinding.method << "\n"
+             << "        trackFinding.strategy = " << trackFinding.strategy << "\n"
              << "\n"
-             << "        trackFitting.method = " << trackFitting.method << "\n"
+             << "        trackFitting.strategy = " << trackFitting.strategy << "\n"
              << "\n";
     }
 

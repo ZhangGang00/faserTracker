@@ -1,46 +1,41 @@
 //#pragma once
 //
-//#include <vector>
 //#include "FaserTracker/Settings.hh"
-//#include "FaserTracker/DigiReader.hh"
-//#include "FaserTracker/Digit.hh"
-//#include "FaserTracker/DigiCluster.hh"
 //#include "FaserTracker/TrackCandidate.hh"
+//#include <string>
+//#include <vector>
 //
 //
 //namespace FaserTracker {
 //
-//    struct TrackFinder {
+//    class TrackFinder {
 //
-//        std::shared_ptr<Settings> settings;
-//        double chargeThreshold = 0;
+//        struct Impl;
+//        std::unique_ptr<Impl> impl;
+//
+//    public:
+//
+//        enum {NONE, GLOBAL, SEED} strategy;
+//
 //        double yTolerance = 0;
 //
-//        //TODO: read in this info from faserMC/faserGeo.mac
-//        static constexpr int N_PLANES    = 5;
-//        static constexpr int START_PLANE = 0;
-//        static constexpr int END_PLANE   = N_PLANES - 1;
+//        std::vector<SpacePoint> spacePoints;
 //
-//        //std::vector<DigitCluster> digitClusters;
-//
-//        TrackFinder(std::shared_ptr<Settings> settings_) :
-//            settings {settings_},
-//            chargeThreshold {settings->trackFinding.chargeThreshold},
-//            yTolerance {settings->trackFinding.yTolerance}
+//        TrackFinder(std::shared_ptr<Settings> settings)
+//            : impl {std::make_unique<Impl>()}
+//            , yTolerance {settings->trackFinding.yTolerance}
 //        {
+//            setStrategy(settings->trackFinding.strategy);
 //        }
 //
-//        std::vector<TrackCandidate> findTruthTracks(const std::vector<Digit> & digits);
+//        void setStrategy(const std::string & strategy);
 //
-//        std::vector<TrackCandidate> findLinearYZ(const std::vector<Digit> & digits);
-//        std::vector<TrackCandidate> findLinearYZ(const std::vector<DigiCluster> & digiClusters);
+//        //std::vector<TrackCandidate> findTruthTracks(const std::vector<Digit> & digits);
 //
-//        void saveTrack(const TrackCandidate & candidate);
+//        //std::vector<TrackCandidate> findLinearYZ(const std::vector<Digit> & digits);
+//        //std::vector<TrackCandidate> findLinearYZ(const std::vector<DigiCluster> & digiClusters);
 //
-//
-//    private:
-//
-//        long _nTracksFound = 0;
+//        //void saveTrack(const TrackCandidate & candidate);
 //
 //    };
 //

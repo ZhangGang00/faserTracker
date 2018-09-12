@@ -27,7 +27,7 @@ makeFaserTracker() {
     cd $FASER_TRACKER_DIR
     echo "Now working in ${FASER_TRACKER_DIR}..."
     
-    mkdir -p faser_tracker_build faser_tracker_run/include
+    mkdir -p  faser_tracker_build  faser_tracker_run/include  faser_tracker_run/output
 
     # Avoid making `faserMC` a formal cmake dependency to avoid `Geant4` dependency
     #cp -f faser_tracker/external/faserMC/include/FaserTracker*.hh faser_tracker_run/include/
@@ -50,4 +50,8 @@ makeFaserTracker() {
 }
 
 makeFaserTracker $@
+
+cd ${FASER_TRACKER_DIR}
+echo
+echo "DEV --> Now back to ${FASER_TRACKER_DIR}"
 
