@@ -33,11 +33,11 @@ namespace FaserTracker {
         } tracks;
 
         struct {
-            std::string  method     = "none";
+            std::string  strategy = "none";
         } trackFinding;
 
         struct {
-            std::string  method     = "none";
+            std::string  strategy = "none";
         } trackFitting;
     
         Settings(const std::string & settingsFile);

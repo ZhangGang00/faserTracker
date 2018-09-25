@@ -1,54 +1,74 @@
-#include "FaserTracker/common_includes.hh"
 #include "FaserTracker/TrackCandidate.hh"
-#include "FaserTracker/DigiCluster.hh"
+#include "FaserTracker/common_includes.hh"
 
 
 namespace FaserTracker {
 
-    void TrackCandidate::addCluster(const DigiCluster & cluster) {
+//------------------------------------------------------------------------------
 
-        if (eventNumber < 0) {
-            eventNumber = cluster.eventNumber;
-        }
+void TrackCandidate::addSpacePoint(const SpacePoint & sp) {
 
-        if (eventNumber > -1 && cluster.eventNumber != eventNumber) {
-            cout << "WARNING  TrackCandidate::addCluster\n"
-                 << "         Adding cluster with event number different from the others\n";
-        }
+    //if (eventNumber < 0) {
+    //    eventNumber = sp.eventNumber;
+    //}
 
-        digiClusters->push_back(cluster);
+    //if (eventNumber > -1 && sp.eventNumber != eventNumber) {
+    //    cout << "WARNING  TrackCandidate::addSpacePoint\n"
+    //         << "         Adding space point with event number different from the others\n";
+    //}
 
+    spacePoints->push_back(sp);
+
+}
+
+//------------------------------------------------------------------------------
+
+void TrackCandidate::sortSpacePointsByZ() {
+
+    std::sort(spacePoints->begin(), spacePoints->end(), [](SpacePoint & a, SpacePoint & b) -> bool {
+        return a.globalPos.Z() < b.globalPos.Z();
+    });
+
+}
+
+//------------------------------------------------------------------------------
+
+bool TrackCandidate::isValid() const {
+
+    //TODO: read number of planes from input geometry
+    //bool hitPlanes [N_PLANES] = {false};
+
+    //for (const SpacePoint & sp : *spacePoints) {
+    //    hitPlanes[sp.plane] = true;
+    //}
+
+    //for (bool hitPresent : hitPlanes) {
+    //    if (!hitPresent) return false;
+    //}
+
+    return true;
+
+}
+
+//------------------------------------------------------------------------------
+
+void TrackCandidate::dumpSpacePoints() const {
+
+    cout << "INFO  FaserTracker::TrackCandidate::dumpSpacePoints\n"
+         << "      Dumping space points in track candidate:\n";
+
+    for (const SpacePoint & sp : *spacePoints) {
+        //sp.print();
+        const TVector3 & pos = sp.globalPos;
+        cout << "        SpacePoint(x=" << pos.X()
+             <<                  ", y=" << pos.Y()
+             <<                  ", z=" << pos.Z()
+             <<                  ")\n";
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+}
 
-    bool TrackCandidate::isValid() const {
-
-        bool hitPlanes [N_PLANES] = {false};
-
-        for (const DigiCluster & cluster : *digiClusters) {
-            hitPlanes[cluster.plane] = true;
-        }
-
-        for (bool hitPresent : hitPlanes) {
-            if (!hitPresent) return false;
-        }
-
-        return true;
-
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-
-    void TrackCandidate::dumpDigitClusters() const {
-
-        cout << "INFO  Dumping digit clusters in track candidate\n\n";
-
-        for (const DigiCluster & cluster : *digiClusters) {
-            cluster.print();
-        }
-
-    }
+//------------------------------------------------------------------------------
 
 }
 

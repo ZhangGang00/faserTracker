@@ -34,9 +34,11 @@
 //         << '\n';
 //}
 //
+
 int main(int argc, char ** argv) {
     return 0;
 }
+
 //int main(int argc, char ** argv) {
 //    string input = "";
 //    long   nEntries = -1;
@@ -79,6 +81,41 @@ int main(int argc, char ** argv) {
 //    string settingsFile = string(faserDir) + "/faser_tracker_run/settings.json";
 //    auto settings = make_shared<FaserTracker::Settings>(settingsFile);
 //
+//    TFile inputFile {input.c_str()};
+//
+//    TTree * eventTree = (TTree*) inputFile.Get(settings->input.eventTreeName.c_str());
+//    if (eventTree == nullptr) {
+//        cout << "ERROR  Unable to load event tree: " << settings->input.eventTreeName << '\n'
+//             << "       Exiting.\n"
+//             << '\n';
+//        return 1;
+//    }
+//    cout << "INFO  Loaded event tree " << settings->input.eventTreeName << " from "
+//         << input << " with " << eventTree->GetEntries() << " entries.\n";
+//
+//    TTree * geoTree = (TTree*) inputFile.Get(settings->input.geometryTreeName.c_str());
+//    if (geoTree == nullptr) {
+//        cout << "ERROR  Unable to load event tree: " << settings->input.geometryTreeName << '\n'
+//             << "       Exiting.\n"
+//             << '\n';
+//        return 1;
+//    }
+//    long nGeoEntries = geoTree->GetEntries();
+//    cout << "INFO  Loaded input geometry tree " << settings->input.geometryTreeName << " from "
+//         << input << " with " << nGeoEntries << " entries.\n";
+//    if (nGeoEntries != 1) {
+//        cout << "ERROR  The geometry tree " << geoTree->GetName() << " has " << nGeoEntries << " entries.\n"
+//             << "       It should have exactly one entry. Exiting.\n"
+//             << '\n';
+//        return 1;
+//    }
+//
+//    FaserTrackerGeometry * geo = nullptr;
+//    geoTree->SetBranchAddress("geo", &geo);
+//    geoTree->GetEntry(0);
+//
+//    FaserTrackerEvent * event = nullptr;
+//    eventTree->SetBranchAddress("events", &event);
 //    for (int iEntry=0; iEntry<eventTree->GetEntries(); ++iEntry) {
 //        eventTree->GetEntry(iEntry);
 //        cout << "INFO  Processing event " << event->eventNumber << '\n';
@@ -234,23 +271,19 @@ int main(int argc, char ** argv) {
 //
 //
 //
-//
-//    vector<TrackCandidate> SettingsHandler::findTracks() {
+//    vector<FittedTrack> SettingsHandler::fitTracks() {
 //
 //        const string & strategy = settings->trackFinding.strategy;
 //
 //        if (strategy == "none") return {};
 //
-//        if (strategy == "truth") {
-//        }
-//
 //        if (strategy == "global") {
 //        }
 //
-//        if (strategy == "seed") {
+//        if (strategy == "kalman") {
 //        }
 //
-//        throw runtime_error {"FaserTracker::SettingsHandler::findTracks: unknown strategy: " + strategy};
+//        throw runtime_error {"FaserTracker::SettingsHandler::fitTracks: unknown strategy: " + strategy};
 //
 //    }
 //

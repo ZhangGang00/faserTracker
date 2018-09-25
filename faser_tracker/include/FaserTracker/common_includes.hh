@@ -33,7 +33,7 @@ using std::cin;
 
 // pointers
 using std::unique_ptr;
-//using std::make_unique;
+using std::make_unique;
 using std::shared_ptr;
 using std::make_shared;
 
@@ -57,4 +57,7 @@ using std::max;
 // exceptions
 using std::runtime_error;
 using std::logic_error;
+
+// miscellaneous
+using std::move;
 

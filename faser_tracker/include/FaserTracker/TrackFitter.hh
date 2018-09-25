@@ -2,24 +2,27 @@
 
 #include "FaserTracker/Settings.hh"
 #include "FaserTracker/TrackCandidate.hh"
-#include "TF1.h"
+#include "FaserTracker/FittedTrack.hh"
+#include <memory>
 
+
+//------------------------------------------------------------------------------
 
 namespace FaserTracker {
 
-    struct TrackFitter {
+    class TrackFitter {
 
-        //TODO: read in this info from faserMC/faserGeo.mac
-        static constexpr int N_PLANES    = 5;
-        static constexpr int START_PLANE = 0;
-        static constexpr int END_PLANE   = N_PLANES - 1;
+        struct Impl;
+        std::unique_ptr<Impl> impl;
 
+    public:
 
-        TrackFitter(std::shared_ptr<Settings> settings)
-        {
-        }
+        enum {GLOBAL, KALMAN} strategy;
 
-        void fitAndSaveCircularXZ(const TrackCandidate & candidate);
+        TrackFitter(std::shared_ptr<Settings> settings);
+
+        FittedTrack fitTrackCandidate(TrackCandidate & candidate);
+
     };
 
 }
