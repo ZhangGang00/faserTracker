@@ -1,6 +1,5 @@
 #include "FaserTracker/common_includes.hh"
 #include "FaserTracker/TrackFitter.hh"
-#include "FaserTracker/Digit.hh"
 #include "TVector3.h"
 #include "TStyle.h"
 #include "TLatex.h"
@@ -19,24 +18,24 @@ namespace FaserTracker {
 
     void TrackFitter::fitAndSaveCircularXZ(const TrackCandidate & trackCandidate) {
 
-        TGraph g_clusters;
-        for (const DigiCluster & cluster : *trackCandidate.digiClusters) {
-            shared_ptr<TVector3> pos = cluster.globalPosition();
-            g_clusters.SetPoint(g_clusters.GetN(), pos->Z(), pos->X());
+        TGraph g_spacePoints;
+        for (const SpacePoint & sp : trackCandidate.spacePoints) {
+            const TVector3 &  pos = sp.globalPos;
+            g_spacePoints.SetPoint(g_spacePoints.GetN(), pos.Z(), pos.X());
         }
 
         TCanvas canvas {"fittedTrack", "fittedTrack", 1000, 600};
         canvas.SetGrid();
         canvas.SetBatch(true);
         TRandom3 r;
-        g_clusters.Draw("ap*");
+        g_spacePoints.Draw("ap*");
         auto chi2Function = [&](const Double_t *par) {
             //minimisation function computing the sum of squares of residuals
             // looping at the graph points
             double f = 0;
-            double *x = g_clusters.GetX();
-            double *y = g_clusters.GetY();
-            for (int i=0; i<g_clusters.GetN(); ++i) {
+            double *x = g_spacePoints.GetX();
+            double *y = g_spacePoints.GetY();
+            for (int i=0; i<g_spacePoints.GetN(); ++i) {
                 double u = x[i] - par[0];
                 double v = y[i] - par[1];
                 double dr = par[2] - std::sqrt(u*u+v*v);
@@ -68,8 +67,8 @@ namespace FaserTracker {
         double z0 = result.Parameter(0);
         double x0 = result.Parameter(1);
         double R  = result.Parameter(2);
-        double zMin = TMath::MinElement(g_clusters.GetN(), g_clusters.GetX());
-        double zMax = TMath::MaxElement(g_clusters.GetN(), g_clusters.GetX());
+        double zMin = TMath::MinElement(g_spacePoints.GetN(), g_spacePoints.GetX());
+        double zMax = TMath::MaxElement(g_spacePoints.GetN(), g_spacePoints.GetX());
 
         TF1 f_upperSemiCircle {"f_upperSemiCircle", "[1] + sqrt([2]*[2] - (x-[0])*(x-[0]))", zMin, zMax};
         f_upperSemiCircle.SetParameter(0, z0);
@@ -84,9 +83,9 @@ namespace FaserTracker {
         f_lowerSemiCircle.Draw("same");
 
         // Add labels
-        g_clusters.SetTitle(trackCandidate.label.c_str());
-        g_clusters.GetXaxis()->SetTitle("z [mm]");
-        g_clusters.GetYaxis()->SetTitle("x [mm]");
+        g_spacePoints.SetTitle(trackCandidate.label.c_str());
+        g_spacePoints.GetXaxis()->SetTitle("z [mm]");
+        g_spacePoints.GetYaxis()->SetTitle("x [mm]");
 
         string saveName = "fittedTrack_" + trackCandidate.label + ".png";
         canvas.SaveAs(saveName.c_str());

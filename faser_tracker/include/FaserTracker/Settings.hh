@@ -33,11 +33,13 @@ namespace FaserTracker {
         } tracks;
 
         struct {
-            std::string  method     = "none";
+            std::string method     = "truth";
+            double chargeThreshold = 0.5;
+            double yTolerance      = 0.5;
         } trackFinding;
 
         struct {
-            std::string  method     = "none";
+            std::string method = "global";
         } trackFitting;
     
         Settings(const std::string & settingsFile);

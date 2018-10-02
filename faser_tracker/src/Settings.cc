@@ -9,7 +9,7 @@ namespace FaserTracker {
     Settings::Settings(const std::string & settingsFile) {
         boost::property_tree::ptree properties;
         read_json(settingsFile, properties);
-        cout << "INFO  Loaded settings file: " << settingsFile << "\n";
+        cout << "INFO  Loaded settings file: " << settingsFile << '\n';
 
         // input
         input.fileName         = properties.get("input.fileName", "FaserMCEvent_tracking.root");
@@ -33,34 +33,38 @@ namespace FaserTracker {
         tracks.truthIdEnd   = properties.get("tracks.truthIdEnd", -1);
 
         // track finding
-        trackFinding.method = properties.get("trackFinding.method", "truth");
+        trackFinding.method          = properties.get("trackFinding.method", "truth");
+        trackFinding.chargeThreshold = properties.get("trackFinding.chargeThreshold", 0.5);
+        trackFinding.yTolerance      = properties.get("trackFinding.yTolerance", 0.5);
 
         // track fitting
         trackFitting.method = properties.get("trackFitting.method", "global");
 
 
         cout << "INFO  Using the following settings:\n"
-             << "\n"
-             << "        debug.input       = " << debug.input << "\n"
-             << "        debug.spacePoints = " << debug.spacePoints << "\n"
-             << "        debug.tracks      = " << debug.tracks << "\n"
-             << "\n"
-             << "        input.fileName        = " << input.fileName << "\n"
-             << "        input.eventTreeName   = " << input.eventTreeName << "\n"
-             << "        input.geomtryTreeName = " << input.geometryTreeName << "\n"
-             << "\n"
-             << "        output.fileName = " << output.fileName << "\n"
-             << "\n"
-             << "        events.eventNumberStart = " << events.eventNumberStart << "\n"
-             << "        events.eventNumberEnd   = " << events.eventNumberEnd << "\n"
-             << "\n"
-             << "        tracks.truthIdStart = " << tracks.truthIdStart << "\n"
-             << "        tracks.truthIdEnd   = " << tracks.truthIdEnd << "\n"
-             << "\n"
-             << "        trackFinding.method = " << trackFinding.method << "\n"
-             << "\n"
-             << "        trackFitting.method = " << trackFitting.method << "\n"
-             << "\n";
+             << '\n'
+             << "        debug.input       = " << debug.input << '\n'
+             << "        debug.spacePoints = " << debug.spacePoints << '\n'
+             << "        debug.tracks      = " << debug.tracks << '\n'
+             << '\n'
+             << "        input.fileName        = " << input.fileName << '\n'
+             << "        input.eventTreeName   = " << input.eventTreeName << '\n'
+             << "        input.geomtryTreeName = " << input.geometryTreeName << '\n'
+             << '\n'
+             << "        output.fileName = " << output.fileName << '\n'
+             << '\n'
+             << "        events.eventNumberStart = " << events.eventNumberStart << '\n'
+             << "        events.eventNumberEnd   = " << events.eventNumberEnd << '\n'
+             << '\n'
+             << "        tracks.truthIdStart = " << tracks.truthIdStart << '\n'
+             << "        tracks.truthIdEnd   = " << tracks.truthIdEnd << '\n'
+             << '\n'
+             << "        trackFinding.method          = " << trackFinding.method << '\n'
+             << "        trackFinding.chargeThreshold = " << trackFinding.chargeThreshold << '\n'
+             << "        trackFinding.yTolerance      = " << trackFinding.yTolerance << '\n'
+             << '\n'
+             << "        trackFitting.method = " << trackFitting.method << '\n'
+             << '\n';
     }
 
 }

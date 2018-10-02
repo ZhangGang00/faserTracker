@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Directory containing faser_tracker package
-export FASER_TRACKER_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
-export LD_LIBRARY_PATH="${FASER_TRACKER_DIR}/faser_tracker_run/lib64:$LD_LIBRARY_PATH"
+export FASERTRACKER_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
+export LD_LIBRARY_PATH="${FASERTRACKER_DIR}/faser_tracker_run/lib64:$LD_LIBRARY_PATH"
 
 # TODO: allow for more general options instead of hardcoding lxplus setup
 # lxplus setup
@@ -30,6 +30,6 @@ export PATH="$HOME/software/cmake-3.11.0-install/bin:$PATH"
 # End of location-specific settings
 ################################################################################
 
-export PATH="$FASER_TRACKER_DIR/faser_tracker_run/bin:$PATH"
+export PATH="$FASERTRACKER_DIR/faser_tracker_run/bin:$PATH"
 
 echo "Done."

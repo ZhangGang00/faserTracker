@@ -1,10 +1,5 @@
 // adapted from Geant4 example
 
-#include "FaserTracker/DigiReader.hh"
-//#include "FaserTracker/TestTrackFit.hh"
-#include "FaserTracker/Plots.hh"
-#include "FaserTracker/DigiClusterFinder.hh"
-#include "FaserTracker/DigiCluster.hh"
 #include "FaserTracker/TrackCandidate.hh"
 #include "FaserTracker/TrackFinder.hh"
 #include "FaserTracker/TrackFitter.hh"
@@ -13,7 +8,6 @@
 #include "FaserTrackerGeometry.hh"
 #include "FaserTrackerEvent.hh"
 #include "FaserTrackerSpacePoint.hh"
-//#include "FaserSensorHit.hh"
 
 #include <cstdlib>
 
@@ -25,6 +19,8 @@
 #include "TGraph.h"
 
 
+//------------------------------------------------------------------------------
+
 void usage(string executable) {
     cout << "Usage: " << executable << " [options]" << "\n"
          << "Options:\n"
@@ -33,6 +29,8 @@ void usage(string executable) {
          << "  -n/--nEntries N_ENTRIES        number of entries from input to process\n"
          << "\n";
 }
+
+//------------------------------------------------------------------------------
 
 int main(int argc, char ** argv) {
     string input = "";
@@ -67,9 +65,7 @@ int main(int argc, char ** argv) {
     string faserDir = _faserDir;
 
     // Load input space points & geometry settings
-    //cout << "Loading shared library...\n";
-    //gSystem->Load("libFaserTrackerClassesDict");
-    string loadCommand = ".L " + faserDir + "/faser_tracker/external/faserMC/include/FaserTrackerClasses.hh+";
+    string loadCommand = ".L " + faserDir + "/faser_tracker/external/faserMC/faserMC/include/FaserTrackerClasses.hh+";
     gROOT->ProcessLine(loadCommand.c_str());
 
     // Load settings
@@ -119,148 +115,6 @@ int main(int argc, char ** argv) {
             cout << "      Read space point with global position (" << pos.X() << "," << pos.Y() << "," << pos.Z() << ")\n";
         }
     }
-
-
-    //FaserTracker::DigiReader digiReader {*eventTree};
-    //cout << "INFO  DigiReader initialized with input chain.\n";
-
-    //int eventCounter = 0;
-    //map<int, int> trackIdCounter;
-
-    //shared_ptr<TFile> outputFile;
-    //shared_ptr<FaserTracker::Plots> plots;
-    //if (settings->tracks.plotTruth) {
-    //    outputFile = make_shared<TFile>("truth_track_info.root", "recreate");
-    //    plots = make_shared<FaserTracker::Plots>(settings);
-    //}
-
-
-    //for (long iEvent = 0; iEvent < eventTree->GetEntries(); ++iEvent) {
-    //    if (settings->events.eventNumberStart > -1 && iEvent < settings->events.eventNumberStart) continue;
-    //    if (settings->events.eventNumberEnd   > -1 && iEvent > settings->events.eventNumberEnd) break;
-
-    //    digiReader.getEntry(iEvent);
-
-    //    if (settings->debug.chain || (iEvent>0 && iEvent%1000==0)) {
-    //        cout << "INFO  Checking chain entry " << iEvent
-    //             << "   nDigits = " << digiReader.digiPlane.size()
-    //             << "   nTruth  = " << digiReader.truthPlane.size() << "\n";
-    //    }
-
-    //    ++eventCounter;
-    //    if (nEntries > -1 && eventCounter > nEntries) break;
-
-    //    if (settings->tracks.countTracks) {
-    //        for (int trackId : digiReader.truthTrack) {
-    //            if (settings->tracks.truthIdStart > -1 && trackId < settings->tracks.truthIdStart) continue;
-    //            if (settings->tracks.truthIdEnd   > -1 && trackId > settings->tracks.truthIdEnd) continue;
-
-    //            if (trackIdCounter.count(trackId) < 1) trackIdCounter[trackId] = 0;
-    //            ++trackIdCounter[trackId];
-    //        }
-    //    }
-
-    //    if (settings->tracks.plotTruth) {
-    //        plots->plotTruthDigits(digiReader, *outputFile, iEvent);
-    //    }
-
-
-    //    if (settings->digitClusters.dumpClusters ||
-    //        settings->digitClusters.dumpTruthTrackIds ||
-    //        settings->trackFinding.findClusterTracks)
-    //    {
-    //        FaserTracker::DigiClusterFinder dcf {settings->digitClusters.distanceTolerance};
-    //        shared_ptr<vector<FaserTracker::DigiCluster>> digiClusters = dcf.findDigitClusters(digiReader);
-
-    //        if (settings->digitClusters.dumpClusters) {
-    //            cout << "INFO  Dumping digit clusters\n\n";
-
-    //            for (const FaserTracker::DigiCluster & cluster : *digiClusters) {
-    //                cluster.print();
-    //            }
-    //            cout << "\n";
-    //        }
-
-    //        if (settings->digitClusters.dumpTruthTrackIds) {
-    //            cout << "INFO  Dumping truth track IDs for digits in clusters\n\n";
-
-    //            for (const FaserTracker::DigiCluster & cluster : *digiClusters) {
-    //                cluster.printTruthTrackIds();
-    //            }
-    //            cout << "\n";
-    //        }
-
-
-    //        if (settings->trackFinding.findClusterTracks) {
-
-    //            cout << "INFO  Finding cluster tracks\n";
-
-    //            FaserTracker::TrackFinder finder {settings};
-    //            vector<FaserTracker::TrackCandidate> candidates = finder.findLinearYZ(*digiClusters);
-
-    //            if (settings->trackFinding.saveTracks) {
-    //                cout << "INFO  Saving cluster tracks found\n";
-
-    //                for (const FaserTracker::TrackCandidate & candidate : candidates) {
-    //                    finder.saveTrack(candidate);
-    //                }
-    //            }
-
-    //            if (settings->trackFitting.fitAndSaveTracks) {
-    //                cout << "INFO  Fitting and saving cluster tracks\n";
-
-    //                FaserTracker::TrackFitter fitter {settings};
-
-    //                for (const FaserTracker::TrackCandidate & candidate : candidates) {
-    //                    fitter.fitAndSaveCircularXZ(candidate);
-    //                }
-    //            }
-
-    //        }
-
-    //    }
-
-    //    if (settings->trackFinding.findTruthTracks &&
-    //        settings->trackFitting.fitAndSaveTracks)
-    //    {
-    //        cout << "INFO  Finding truth tracks\n";
-
-    //        FaserTracker::TrackFinder finder {settings};
-    //        vector<FaserTracker::TrackCandidate> candidates = finder.findTruthTracks(*digiReader.digits());
-
-    //        if (settings->trackFinding.saveTracks) {
-    //            cout << "INFO  Saving truth tracks found\n";
-
-    //            for (const FaserTracker::TrackCandidate & candidate : candidates) {
-    //                finder.saveTrack(candidate);
-    //            }
-    //        }
-
-    //        cout << "INFO  Fitting and saving truth tracks\n";
-    //        FaserTracker::TrackFitter fitter {settings};
-
-    //        for (const FaserTracker::TrackCandidate & candidate : candidates) {
-    //            fitter.fitAndSaveCircularXZ(candidate);
-    //        }
-    //    }
-
-
-    //}
-
-    //// Note: This is counting the number of tracks across events.
-    ////       Set `eventNumberMin` = `eventNumberMax` to count the number of tracks
-    ////       in a single event.
-    //if (settings->tracks.countTracks) {
-    //    cout << "INFO  Dumping digit counts for track IDs in range specified by\n"
-    //         << "      settings.tracks.truthIdStart, settings.tracks.truthIdEnd:\n"
-    //         << "\n";
-
-    //    // `trackIdCounter` internally sorted by key as it was populated so no need to sort
-    //    for (const auto & t : trackIdCounter) {
-    //        cout << "        Track ID " << t.first << "\t" << t.second << "\n";
-    //    }
-    //    cout << "\n";
-    //}
 
 }
 
