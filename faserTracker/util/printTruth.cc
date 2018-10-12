@@ -8,6 +8,7 @@
 #include "FaserTrackerGeometry.hh"
 #include "FaserTrackerEvent.hh"
 #include "FaserTrackerSpacePoint.hh"
+#include "FaserTrackerTruthParticle.hh"
 
 #include <cstdlib>
 
@@ -55,47 +56,33 @@ int main(int argc, char ** argv) {
          << "  input      = " << input      << "\n"
          << "\n";
 
-    const char * _faserDir = std::getenv("FASER_TRACKER_DIR");
-    if (!_faserDir) {
-        cout << "ERROR  The environment variable `FASER_TRACKER_DIR`\n"
-             << "       must be set to the name of the directory\n"
-             << "       containing the `faser_tracker` package.\n";
-        return 1;
-    }
-    string faserDir = _faserDir;
 
     // Load input space points & geometry settings
-    string loadCommand = ".L " + faserDir + "/faser_tracker/external/faserMC/faserMC/include/FaserTrackerClasses.hh+";
-    gROOT->ProcessLine(loadCommand.c_str());
-
-    // Load settings
-    string settingsFile = string(faserDir) + "/faser_tracker_run/settings.json";
-    auto settings = make_shared<FaserTracker::Settings>(settingsFile);
 
     TFile inputFile {input.c_str()};
 
-    TTree * eventTree = (TTree*) inputFile.Get(settings->input.eventTreeName.c_str());
+    TTree * eventTree = (TTree*) inputFile.Get("events");
     if (eventTree == nullptr) {
-        cout << "ERROR  Unable to load event tree: " << settings->input.eventTreeName << "\n"
+        cout << "ERROR  Unable to load event tree: `events`\n"
              << "       Exiting.\n"
              << "\n";
         return 1;
     }
-    cout << "INFO  Loaded event tree " << settings->input.eventTreeName << " from "
+    cout << "INFO  Loaded event tree `events` from "
          << input << " with " << eventTree->GetEntries() << " entries.\n";
 
-    TTree * geoTree = (TTree*) inputFile.Get(settings->input.geometryTreeName.c_str());
+    TTree * geoTree = (TTree*) inputFile.Get("geo");
     if (geoTree == nullptr) {
-        cout << "ERROR  Unable to load event tree: " << settings->input.geometryTreeName << "\n"
+        cout << "ERROR  Unable to load event tree: `geo`\n"
              << "       Exiting.\n"
              << "\n";
         return 1;
     }
     long nGeoEntries = geoTree->GetEntries();
-    cout << "INFO  Loaded input geometry tree " << settings->input.geometryTreeName << " from "
+    cout << "INFO  Loaded input geometry tree `geo` from "
          << input << " with " << nGeoEntries << " entries.\n";
     if (nGeoEntries != 1) {
-        cout << "ERROR  The geometry tree " << geoTree->GetName() << " has " << nGeoEntries << " entries.\n"
+        cout << "ERROR  The geometry tree `geo` has " << nGeoEntries << " entries.\n"
              << "       It should have exactly one entry. Exiting.\n"
              << "\n";
         return 1;
@@ -110,9 +97,10 @@ int main(int argc, char ** argv) {
     for (int iEntry=0; iEntry<eventTree->GetEntries(); ++iEntry) {
         eventTree->GetEntry(iEntry);
         cout << "INFO  Processing event " << event->eventNumber << "\n";
-        for (const FaserTrackerSpacePoint * sp : event->spacePoints) {
-            const TVector3 & pos = sp->globalPos;
-            cout << "      Read space point with global position (" << pos.X() << "," << pos.Y() << "," << pos.Z() << ")\n";
+        for (const FaserTrackerTruthParticle * tp : event->truthParticles) {
+            const TVector3 vertex = tp->vertex;
+            cout << "      Read truth particle with global position (" << vertex.X() << "," << vertex.Y() << "," << vertex.Z() << ")\n";
+            //cout << "      Read truth particle with PDG ID = " << tp->pdgID << ")\n";
         }
     }
 

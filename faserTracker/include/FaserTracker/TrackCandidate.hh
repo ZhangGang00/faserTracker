@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "FaserTrackerSpacePoint.hh"
+#include "TLorentzVector.h"
 
 
 namespace FaserTracker {
@@ -18,6 +19,11 @@ namespace FaserTracker {
         std::vector<SpacePoint> spacePoints;
         std::string label;
         int truthTrackId;
+
+        double parameters [5]; // rho, theta, phi, x, y
+        TLorentzVector fourMomentum;
+        TVector3 vertex;
+        //TODO: add truth info here
 
 
         TrackCandidate() :
