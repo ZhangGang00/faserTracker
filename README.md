@@ -1,4 +1,4 @@
-# faser_tracker
+# faserTracker
 
 Keep your tracks from getting out of *fase*.
 
@@ -27,10 +27,10 @@ to the correct locations, run
 ```
 source make.sh  # sources `set_up_environment.sh`
 ```
-to set up the environment and compile the `faser_tracker` package.
+to set up the environment and compile the `faserTracker` package.
 
-If the above completes successfully, `faser_tracker` should be installed and you
-should be taken to the `faser_tracker_run` directory, where you can run
+If the above completes successfully, `faserTracker` should be installed and you
+should be taken to the `faserTracker_run` directory, where you can run
 ```
 ./bin/find_tracks -i FILENAME [other flags]  # or just `find_tracks [flags]`
 ```
@@ -46,17 +46,17 @@ For a list of all available options, run
 ./bin/find_tracks --help
 ```
 
-To do a clean rebuild of `faser_tracker` run
+To do a clean rebuild of `faserTracker` run
 ```
 source make.sh --clean
 ```
-This wipes the `faser_tracker_build` and `faser_tracker_run` directories and
-compiles `faser_tracker` and its dependencies from scratch.
+This wipes the `faserTracker_build` and `faserTracker_run` directories and
+compiles `faserTracker` and its dependencies from scratch.
 
 
 ## Configuration settings
 
-Configuration options are specified in the `settings.json` file **in the `faser_tracker_run` directory**.
+Configuration options are specified in the `settings.json` file **in the `faserTracker_run` directory**.
 
  | Feature       | Setting             | Description
  |:--------------|:--------------------|:-------------------------------------------

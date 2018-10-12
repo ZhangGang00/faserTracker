@@ -1,4 +1,4 @@
 [submodule "faser_tracker/external/faserMC"]
-	path = faser_tracker/external/faserMC
+	path = faserTracker/external/faserMC
 	url = https://github.com/asoffa/faserMC.git
-	branch = master
+	tag = faserMC-0-0-0
