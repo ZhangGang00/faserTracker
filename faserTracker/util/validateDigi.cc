@@ -13,9 +13,12 @@
 
 #include <cstdlib>
 
+#include "TSystem.h"
 #include "TChain.h"
 #include "TFile.h"
+#include "TCanvas.h"
 #include "TGraph.h"
+#include "TAxis.h"
 
 
 //------------------------------------------------------------------------------
@@ -37,6 +40,12 @@ int main(int argc, char ** argv) {
   long    nEntries = -1;
   bool    verbose = false;
 
+  // Plane/module/sensor/row selection (-1 for all)
+  int  plane  = -1;
+  int  module = -1;
+  int  sensor = -1;
+  int  row    = -1;
+
   int iOpt = 1;
   while (iOpt < argc) {
     string sw = argv[iOpt];
@@ -44,6 +53,10 @@ int main(int argc, char ** argv) {
     else if (sw=="-i" || sw=="--input"     ) { input = argv[++iOpt]; }
     else if (sw=="-n" || sw=="--nEntries"  ) { nEntries = stoi(argv[++iOpt]); }
     else if (sw=="-v" || sw=="--verbose"   ) { verbose = true; }
+    else if (sw=="-p" || sw=="--plane"     ) { plane  = stoi(argv[++iOpt]); }
+    else if (sw=="-m" || sw=="--module"    ) { module = stoi(argv[++iOpt]); }
+    else if (sw=="-s" || sw=="--sensor"    ) { sensor = stoi(argv[++iOpt]); }
+    else if (sw=="-r" || sw=="--row"       ) { row    = stoi(argv[++iOpt]); }
     else {
       cout << "Unknown switch: " << sw << '\n';
       usage(argv[0]);
@@ -101,7 +114,7 @@ int main(int argc, char ** argv) {
 
   // Analyze digits, analog/digital clusters, & space points
 
-  TFile outputFile {"validateDigi.root", "recreate"};
+  //TFile outputFile {"validateDigi.root", "recreate"};
 
   TGraph digitVsHit [3];
   TGraph aclVsHit [3];
@@ -116,6 +129,11 @@ int main(int argc, char ** argv) {
     cout << "INFO  Processing event " << event->eventNumber << '\n';
 
     for (const FaserTrackerSpacePoint * sp : event->spacePoints) {
+      if (plane  >= 0 && sp->plane  != plane ) continue;
+      if (module >= 0 && sp->module != module) continue;
+      if (sensor >= 0 && sp->sensor != sensor) continue;
+      if (row    >= 0 && sp->row    != row   ) continue;
+
       double spPos [3] = {sp->globalPos.X(), sp->globalPos.Y(), sp->globalPos.Z()};
       if (verbose) {
         cout << "INFO    SpacePoint(" << sp->plane << ',' << sp->module << ',' << sp->sensor << ',' << sp->row << ',' << sp->charge
@@ -165,8 +183,33 @@ int main(int argc, char ** argv) {
     }
   }
 
+
+  string outputDir = "validateDigi_";
+  if (plane >= 0) outputDir += to_string(plane);
+  else outputDir += 'A'; // 'A' for all
+  if (module >= 0) outputDir += to_string(module);
+  else outputDir += 'A'; // 'A' for all
+  if (sensor >= 0) outputDir += to_string(sensor);
+  else outputDir += 'A'; // 'A' for all
+  if (row >= 0) outputDir += to_string(row);
+  else outputDir += 'A'; // 'A' for all
+
+  cout << "INFO  Creating directory `" << outputDir << "` and dumping output there...\n";
+  gSystem->mkdir(outputDir.c_str());
+  gSystem->cd(outputDir.c_str());
+
+  TCanvas canvas;
+  canvas.cd();
+
   for (uint i = 0; i < 3; ++i) {
     string component;
+    double xMin = -100.;;
+    double xMax =  100.;
+    double yMin = -100.;
+    double yMax =  100.;
+    //double zMin = -100.;
+    //double zMax = 2100.;
+
     switch (i) {
     case 0:
       component = "x";
@@ -179,35 +222,85 @@ int main(int argc, char ** argv) {
       break;
     }
 
-    outputFile.mkdir("digitVsHit");
-    outputFile.cd("digitVsHit");
-    string name = "digitVsHit_" + component;
-    digitVsHit[i].Write(name.c_str());
+    if (digitVsHit[i].GetN() > 0) {
+      canvas.Clear();
+      //outputFile.mkdir("digitVsHit");
+      //outputFile.cd("digitVsHit");
+      //string name = "digitVsHit_" + component;
+      //digitVsHit[i].Write(name.c_str());
+      string name = "digitVsHit_" + component + ".png";
+      digitVsHit[i].GetXaxis()->SetTitle((component+"Hit [mm]").c_str());
+      digitVsHit[i].GetYaxis()->SetTitle((component+"Digit [mm]").c_str());
+      digitVsHit[i].GetXaxis()->SetRangeUser(xMin, xMax);
+      digitVsHit[i].GetYaxis()->SetRangeUser(yMin, yMax);
+      digitVsHit[i].Draw("ap*");
+      canvas.SaveAs(name.c_str());
+    }
 
-    outputFile.mkdir("analogClusterVsHit");
-    outputFile.cd("analogClusterVsHit");
-    name = "analogClusterVsHit_" + component;
-    aclVsHit[i].Write(name.c_str());
+    if (aclVsHit[i].GetN() > 0) {
+      canvas.Clear();
+      //outputFile.mkdir("analogClusterVsHit");
+      //outputFile.cd("analogClusterVsHit");
+      string name = "analogClusterVsHit_" + component + ".png";
+      aclVsHit[i].GetXaxis()->SetTitle((component+"Hit [mm]").c_str());
+      aclVsHit[i].GetYaxis()->SetTitle((component+"AnalogCluster [mm]").c_str());
+      aclVsHit[i].GetXaxis()->SetRangeUser(xMin, xMax);
+      aclVsHit[i].GetYaxis()->SetRangeUser(yMin, yMax);
+      aclVsHit[i].Draw("ap*");
+      canvas.SaveAs(name.c_str());
+    }
 
-    outputFile.mkdir("digitalClusterVsHit");
-    outputFile.cd("digitalClusterVsHit");
-    name = "digitalClusterVsHit_" + component;
-    aclVsHit[i].Write(name.c_str());
+    if (aclVsHit[i].GetN() > 0) {
+      canvas.Clear();
+      //outputFile.mkdir("digitalClusterVsHit");
+      //outputFile.cd("digitalClusterVsHit");
+      string name = "digitalClusterVsHit_" + component + ".png";
+      aclVsHit[i].GetXaxis()->SetTitle((component+"Hit [mm]").c_str());
+      aclVsHit[i].GetYaxis()->SetTitle((component+"DigitalCluster [mm]").c_str());
+      aclVsHit[i].GetXaxis()->SetRangeUser(xMin, xMax);
+      aclVsHit[i].GetYaxis()->SetRangeUser(yMin, yMax);
+      aclVsHit[i].Draw("ap*");
+      canvas.SaveAs(name.c_str());
+    }
 
-    outputFile.mkdir("clusterVsDigit");
-    outputFile.cd("clusterVsDigit");
-    name = "clusterVsDigit_" + component;
-    aclVsDigit[i].Write(name.c_str());
+    if (aclVsDigit[i].GetN() > 0) {
+      canvas.Clear();
+      //outputFile.mkdir("clusterVsDigit");
+      //outputFile.cd("clusterVsDigit");
+      string name = "analogClusterVsDigit_" + component + ".png";
+      aclVsDigit[i].GetXaxis()->SetTitle((component+"Digit [mm]").c_str());
+      aclVsDigit[i].GetYaxis()->SetTitle((component+"AnalogCluster [mm]").c_str());
+      aclVsDigit[i].GetXaxis()->SetRangeUser(xMin, xMax);
+      aclVsDigit[i].GetYaxis()->SetRangeUser(yMin, yMax);
+      aclVsDigit[i].Draw("ap*");
+      canvas.SaveAs(name.c_str());
+    }
 
-    outputFile.mkdir("spacePointVsHit");
-    outputFile.cd("spacePointVsHit");
-    name = "spacePointVsHit_" + component;
-    spVsHit[i].Write(name.c_str());
+    if (spVsHit[i].GetN() > 0) {
+      canvas.Clear();
+      //outputFile.mkdir("spacePointVsHit");
+      //outputFile.cd("spacePointVsHit");
+      string name = "spacePointVsHit_" + component + ".png";
+      spVsHit[i].GetXaxis()->SetTitle((component+"Hit [mm]").c_str());
+      spVsHit[i].GetYaxis()->SetTitle((component+"SpacePoint [mm]").c_str());
+      spVsHit[i].GetXaxis()->SetRangeUser(xMin, xMax);
+      spVsHit[i].GetYaxis()->SetRangeUser(yMin, yMax);
+      spVsHit[i].Draw("ap*");
+      canvas.SaveAs(name.c_str());
+    }
 
-    outputFile.mkdir("spacePointVsCluster");
-    outputFile.cd("spacePointVsCluster");
-    name = "spacePointVsCluster_" + component;
-    spVsCl[i].Write(name.c_str());
+    if (spVsCl[i].GetN() > 0) {
+      canvas.Clear();
+      //outputFile.mkdir("spacePointVsAnalogCluster");
+      //outputFile.cd("spacePointVsAnalogCluster");
+      string name = "spacePointVsAnalogCluster_" + component + ".png";
+      spVsCl[i].GetXaxis()->SetTitle((component+"AnalogCluster [mm]").c_str());
+      spVsCl[i].GetYaxis()->SetTitle((component+"SpacePoint [mm]").c_str());
+      spVsCl[i].GetXaxis()->SetRangeUser(xMin, xMax);
+      spVsCl[i].GetYaxis()->SetRangeUser(yMin, yMax);
+      spVsCl[i].Draw("ap*");
+      canvas.SaveAs(name.c_str());
+    }
   }
 
   return 0;
