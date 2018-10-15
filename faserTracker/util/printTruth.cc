@@ -1,5 +1,3 @@
-// adapted from Geant4 example
-
 #include "FaserTracker/TrackCandidate.hh"
 #include "FaserTracker/TrackFinder.hh"
 #include "FaserTracker/TrackFitter.hh"
