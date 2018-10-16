@@ -203,22 +203,24 @@ int main(int argc, char ** argv) {
 
   for (uint i = 0; i < 3; ++i) {
     string component;
-    double xMin = -100.;;
-    double xMax =  100.;
-    double yMin = -100.;
-    double yMax =  100.;
-    //double zMin = -100.;
-    //double zMax = 2100.;
+    double axisMin = -100.;;
+    double axisMax =  100.;
 
     switch (i) {
     case 0:
       component = "x";
+      axisMin = -100.;
+      axisMax =  100.;
       break;
     case 1:
       component = "y";
+      axisMin = -100.;
+      axisMax =  100.;
       break;
     case 2:
       component = "z";
+      axisMin = -100.;
+      axisMax = 2100.;
       break;
     }
 
@@ -231,8 +233,8 @@ int main(int argc, char ** argv) {
       string name = "digitVsHit_" + component + ".png";
       digitVsHit[i].GetXaxis()->SetTitle((component+"Hit [mm]").c_str());
       digitVsHit[i].GetYaxis()->SetTitle((component+"Digit [mm]").c_str());
-      digitVsHit[i].GetXaxis()->SetRangeUser(xMin, xMax);
-      digitVsHit[i].GetYaxis()->SetRangeUser(yMin, yMax);
+      digitVsHit[i].GetXaxis()->SetRangeUser(axisMin, axisMax);
+      digitVsHit[i].GetYaxis()->SetRangeUser(axisMin, axisMax);
       digitVsHit[i].Draw("ap*");
       canvas.SaveAs(name.c_str());
     }
@@ -244,8 +246,8 @@ int main(int argc, char ** argv) {
       string name = "analogClusterVsHit_" + component + ".png";
       aclVsHit[i].GetXaxis()->SetTitle((component+"Hit [mm]").c_str());
       aclVsHit[i].GetYaxis()->SetTitle((component+"AnalogCluster [mm]").c_str());
-      aclVsHit[i].GetXaxis()->SetRangeUser(xMin, xMax);
-      aclVsHit[i].GetYaxis()->SetRangeUser(yMin, yMax);
+      aclVsHit[i].GetXaxis()->SetRangeUser(axisMin, axisMax);
+      aclVsHit[i].GetYaxis()->SetRangeUser(axisMin, axisMax);
       aclVsHit[i].Draw("ap*");
       canvas.SaveAs(name.c_str());
     }
@@ -257,8 +259,8 @@ int main(int argc, char ** argv) {
       string name = "digitalClusterVsHit_" + component + ".png";
       aclVsHit[i].GetXaxis()->SetTitle((component+"Hit [mm]").c_str());
       aclVsHit[i].GetYaxis()->SetTitle((component+"DigitalCluster [mm]").c_str());
-      aclVsHit[i].GetXaxis()->SetRangeUser(xMin, xMax);
-      aclVsHit[i].GetYaxis()->SetRangeUser(yMin, yMax);
+      aclVsHit[i].GetXaxis()->SetRangeUser(axisMin, axisMax);
+      aclVsHit[i].GetYaxis()->SetRangeUser(axisMin, axisMax);
       aclVsHit[i].Draw("ap*");
       canvas.SaveAs(name.c_str());
     }
@@ -270,8 +272,8 @@ int main(int argc, char ** argv) {
       string name = "analogClusterVsDigit_" + component + ".png";
       aclVsDigit[i].GetXaxis()->SetTitle((component+"Digit [mm]").c_str());
       aclVsDigit[i].GetYaxis()->SetTitle((component+"AnalogCluster [mm]").c_str());
-      aclVsDigit[i].GetXaxis()->SetRangeUser(xMin, xMax);
-      aclVsDigit[i].GetYaxis()->SetRangeUser(yMin, yMax);
+      aclVsDigit[i].GetXaxis()->SetRangeUser(axisMin, axisMax);
+      aclVsDigit[i].GetYaxis()->SetRangeUser(axisMin, axisMax);
       aclVsDigit[i].Draw("ap*");
       canvas.SaveAs(name.c_str());
     }
@@ -283,8 +285,8 @@ int main(int argc, char ** argv) {
       string name = "spacePointVsHit_" + component + ".png";
       spVsHit[i].GetXaxis()->SetTitle((component+"Hit [mm]").c_str());
       spVsHit[i].GetYaxis()->SetTitle((component+"SpacePoint [mm]").c_str());
-      spVsHit[i].GetXaxis()->SetRangeUser(xMin, xMax);
-      spVsHit[i].GetYaxis()->SetRangeUser(yMin, yMax);
+      spVsHit[i].GetXaxis()->SetRangeUser(axisMin, axisMax);
+      spVsHit[i].GetYaxis()->SetRangeUser(axisMin, axisMax);
       spVsHit[i].Draw("ap*");
       canvas.SaveAs(name.c_str());
     }
@@ -296,8 +298,8 @@ int main(int argc, char ** argv) {
       string name = "spacePointVsAnalogCluster_" + component + ".png";
       spVsCl[i].GetXaxis()->SetTitle((component+"AnalogCluster [mm]").c_str());
       spVsCl[i].GetYaxis()->SetTitle((component+"SpacePoint [mm]").c_str());
-      spVsCl[i].GetXaxis()->SetRangeUser(xMin, xMax);
-      spVsCl[i].GetYaxis()->SetRangeUser(yMin, yMax);
+      spVsCl[i].GetXaxis()->SetRangeUser(axisMin, axisMax);
+      spVsCl[i].GetYaxis()->SetRangeUser(axisMin, axisMax);
       spVsCl[i].Draw("ap*");
       canvas.SaveAs(name.c_str());
     }
