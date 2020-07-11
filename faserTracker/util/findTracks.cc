@@ -104,6 +104,7 @@ int main(int argc, char ** argv) {
     FaserTrackerEvent * event = nullptr;
     eventTree->SetBranchAddress("events", &event);
     for (int iEntry=0; iEntry<eventTree->GetEntries(); ++iEntry) {
+    //for (int iEntry=0; iEntry<500; ++iEntry) {
         eventTree->GetEntry(iEntry);
         cout << "INFO  Processing event " << event->eventNumber << "\n";
         for (const FaserTrackerSpacePoint * sp : event->spacePoints) {

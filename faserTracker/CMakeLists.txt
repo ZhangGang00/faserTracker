@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(FaserTracker LANGUAGES CXX)
 
-set(ROOT_COMPONENTS Core GenVector Hist Tree TreePlayer)
+set(ROOT_LDFLAGS "${ROOT_LDFLAGS} -lMinuit")
+set(ROOT_COMPONENTS Core GenVector Hist Tree TreePlayer Minuit)
 
 include(GNUInstallDirs)
 

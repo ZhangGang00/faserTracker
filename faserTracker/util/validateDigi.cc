@@ -112,6 +112,7 @@ int main(int argc, char ** argv) {
   TGraph spVsCl [3];
 
   for (int iEntry=0; iEntry<eventTree->GetEntries(); ++iEntry) {
+  //for (int iEntry=0; iEntry<500; ++iEntry) {
     eventTree->GetEntry(iEntry);
     cout << "INFO  Processing event " << event->eventNumber << '\n';
 
@@ -121,7 +122,7 @@ int main(int argc, char ** argv) {
         cout << "INFO    SpacePoint(" << sp->plane << ',' << sp->module << ',' << sp->sensor << ',' << sp->row << ',' << sp->charge
                                       << ",(" << spPos[0] << ',' << spPos[1] << ',' << spPos[2] << "))\n";
       }
-
+/*
       for (const FaserTrackerCluster * cl : sp->analogClusters) {
         double clPos [3] = {cl->globalPos.X(), cl->globalPos.Y(), cl->globalPos.Z()};
         if (verbose) {
@@ -154,6 +155,16 @@ int main(int argc, char ** argv) {
           }
         }
       }
+ */
+                   for (uint icl : sp->analogClusterIndices) {
+		      FaserTrackerCluster * cl = event->analogClusters[icl];
+                      for (uint idigit : cl->digitIndices) {
+			 FaserTrackerDigit * digit = event->digits[idigit];
+                         for (uint iHit : digit->truthHitIndices) { 
+				   cout<<"truthHitIndices="<<iHit<<"\n";
+			 }
+		      }
+		   }
     }
 
     if (verbose) {
